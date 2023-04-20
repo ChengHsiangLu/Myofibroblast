@@ -1,50 +1,26 @@
-# Perform differential expression analysis to identify genes that are differentially expressed in fibrotic and non-fibrotic patients under 4 different treatments on HPC 
-
- 
+# Perform differential expression analysis on fibrotic and non-fibrotic patients under 4 different treatments on HPC 
 
 <br> 
-
- 
 
 ## Author 
 
- 
-
 Sam (Cheng-Hsiang) Lu  
-
- 
 
 Email: Cheng-Hsiang.Lu@cshs.org 
 
- 
-
 <br> 
-
- 
 
 ## Mentor 
 
- 
-
 David Casero 
-
- 
 
 Email: David.Casero@cshs.org 
 
- 
-
 <br> 
-
- 
 
 ## Background 
 
- 
-
 ### Inflammatory bowel diseases(IBD) 
-
- 
 
 Inflammatory bowel diseases (IBD) are a group of chronic conditions that cause inflammation and damage to the digestive tract. The two main types of IBD are Crohn's Disease and Ulcerative Colitis. 
 
@@ -57,23 +33,21 @@ Ulcerative colitis, on the other hand, affects only the colon and rectum and cau
 
 Both Crohn's disease and ulcerative colitis are chronic conditions, meaning they can last for a lifetime and require ongoing treatment to manage symptoms and prevent complications. 
 
-<br> 
-
 ### Induced Pluripotent Stem Cells(iPSCs) 
 
 Induced pluripotent stem cells (iPSCs) are a type of stem cell that are generated in the laboratory by reprogramming adult cells, such as skin or blood cells, to a pluripotent state. A pluripotent state means that the cells have the potential to develop into any type of cell in the body, just like embryonic stem cells. 
 
 
-iPSCs offer several advantages over embryonic stem cells, as they can be generated from the patient's own cells, avoiding issues with immune rejection, ethical concerns and the need for embryos. 
+iPSCs offer several advantages as they can be generated from the patient's own cells, avoiding issues with immune rejection, ethical concerns and the need for embryos. 
 
 
-iPSCs can be used to study the underlying causes of diseases, test new drugs and therapies, and potentially generate replacement tissues or organs for transplantation. However, there are still some challenges to overcome in order to use iPSCs safely and effectively in clinical applications, such as ensuring the quality and safety of the cells and their derivatives, and controlling their differentiation into specific cell types. 
+iPSCs can be used to study the underlying causes of diseases, test new drugs and therapies, and potentially generate replacement tissues or organs for transplantation.
 
 <br> 
 
-## Goal 
+## Aim 
 
-In this project, we will be analyzing RNA-seq data from 19 samples, comprising of 10 samples with fibrotic complications and 9 non-fibrotic samples. Each sample has undergone two runs and 4 different treatments(untreated, TGF-B, TNF-A, and TGF-B+TNF-A), resulting in a total of 151 samples(1 library failed). We used induced pluripotent stem cells (iPSC) to differentiate into myofibroblasts and stimulated the system with different signals to observe its development. The objective is to investigate the effect of four different treatments: untreated, TGF-B, TNF-A, and TGF-B+TNF-A on the development of the system. In the end, we will perform differential expression analysis to identify the genes that are differentially expressed in fibrotic and non-fibrotic samples under the different treatments. 
+In this project, we will be analyzing RNA-seq data from 19 samples, comprising of 10 samples with fibrotic complications and 9 non-fibrotic samples. Each sample has undergone two runs and 4 different treatments(untreated, TGF-B, TNF-A, and TGF-B+TNF-A), resulting in a total of 151 samples(1 library failed). We used induced pluripotent stem cells (iPSC) to differentiate into myofibroblasts and stimulated the system with different signals to observe its development. The objective is to investigate the effect of four different treatments: untreated, TGF-B, TNF-A, and TGF-B+TNF-A on the development of the system. In the end, we will perform differential expression analysis to identify the genes that are differentially expressed in fibrotic and non-fibrotic samples under 4 treatments. 
 
 <br> 
 
@@ -85,21 +59,11 @@ In this project, we will be analyzing RNA-seq data from 19 samples, comprising o
 
  
 
-Put all fasq.gz files in a folder: 
-
- 
-
-List all fastq files’ name in fastqfiles.txt 
-
- 
+First, I put all fasq.gz files in one folder and list all fastq files’ name in fastqfiles.txt 
 
 ```ls *q.gz > fastqfiles.txt``` 
 
- 
-
-Cut redundant suffix “_R1_trimmed” and list all fastq files’ name in libraryname.txt and preffix.txt 
-
- 
+Cut redundant suffix “\_R1_trimmed” and list all fastq files’ name in libraryname.txt and preffix.txt 
 
 ```
 ls *q.gz | cut -f 1 -d '.' | sed 's/_R1_trimmed//g'  >libraryname.txt 
@@ -107,11 +71,11 @@ ls *q.gz | cut -f 1 -d '.' | sed 's/_R1_trimmed//g'  >libraryname.txt
 ls *q.gz | cut -f 1 -d '.' | sed 's/_R1_trimmed//g' > preffix.txt
 ``` 
 
-Paste table with 3 columns: fastqfiles.txt libraryname.txt preffix.txt 
+Form a table with 3 columns: fastqfiles.txt libraryname.txt preffix.txt 
 
 ```paste fastqfiles.txt libraryname.txt preffix.txt > tofastatable.txt``` 
 
-Form a small-sized fasta-formatted files. To submit this job to the cluster, you need to read the file, library, and prefix. Once you have done that, run the script "generatefastaFromFastaqz" which is a combination of "DCfastaqTofastaLibraryId.pl". This results in small-sized fasta-formatted files contain only one header and one sequence per read. You can find all scripts in the "scripts" folder. 
+Create small-sized fasta-formatted files. To submit this job to the cluster on HPC, you need to read the file, library, and prefix. Once you have done that, run the script "generatefastaFromFastaqz" which will combine the script "DCfastaqTofastaLibraryId.pl". This results in small-sized fasta-formatted files contain only one header and one sequence per read. You can find all scripts in the "scripts" folder. 
 
 ``` 
 cat tofastatable.txt | awk {print}' | while read file library preffix ; do qsub -cwd -o $PWD -e $PWD -l h_data=2048M,h_rt=8:00:00 $HOME/scripts/generatefastaFromFastaqz $file $library $preffix  
