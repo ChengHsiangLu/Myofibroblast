@@ -1,0 +1,5 @@
+#!/bin/bash
+#first argument: sequence file name
+#second argument: library id
+
+zcat $1 | $HOME/scripts/DCfastaqTofastaLibraryId.pl -L $2 | gzip -c --best > $3.fasta.gz
