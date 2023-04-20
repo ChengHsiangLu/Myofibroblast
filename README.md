@@ -83,6 +83,8 @@ cat tofastatable.txt | awk {print}' | while read file library preffix ; do qsub 
 done 
 ``` 
 
+![](/Pics/fasta_formatted.JPG)
+
 <br> 
 
 #### Generate auxiliary files and directories for each sample 
