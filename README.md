@@ -53,7 +53,7 @@ In this project, we will be analyzing RNA-seq data from 19 samples, comprising o
 
 ## Pipelines 
 
-### In terminal
+### In HPC
 
 #### Convert 151 Fastq to Fasta files 
 
@@ -245,7 +245,7 @@ cat *ambiguous.tab > RBarretTNFATGFB_ambiguous.cnt
 cat *nofeature.tab > RBarretTNFATGFB_nofeature.cnt 
 ``` 
 
-In the future step, I am going to use "RBarretTNFATGFB_antisense.ALL.cnt" file
+I am going to use "RBarretTNFATGFB_antisense.ALL.cnt" file for the further analysis
 
 <br> 
 
