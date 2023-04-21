@@ -61,7 +61,9 @@ In this project, we will be analyzing RNA-seq data from 19 samples, comprising o
 
 First, I put all fasq.gz files in one folder and list all fastq files’ name in fastqfiles.txt 
 
-```ls *q.gz > fastqfiles.txt``` 
+```
+ls *q.gz > fastqfiles.txt
+``` 
 
 Cut redundant suffix “\_R1_trimmed” and list all fastq files’ name in libraryname.txt and preffix.txt 
 
@@ -73,7 +75,9 @@ ls *q.gz | cut -f 1 -d '.' | sed 's/_R1_trimmed//g' > preffix.txt
 
 Form a table with 3 columns: fastqfiles.txt libraryname.txt preffix.txt 
 
-```paste fastqfiles.txt libraryname.txt preffix.txt > tofastatable.txt``` 
+```
+paste fastqfiles.txt libraryname.txt preffix.txt > tofastatable.txt
+``` 
 
 Create small-sized fasta-formatted files. To submit this job to the cluster on HPC, you need to read the file, library, and prefix. Once you have done that, run the script "generatefastaFromFastaqz" which will combine the script "DCfastaqTofastaLibraryId.pl". This results in small-sized fasta-formatted files contain only one header and one sequence per read. You can find all scripts in the "scripts" folder. 
 
@@ -82,24 +86,29 @@ cat tofastatable.txt | awk {print}' | while read file library preffix ; do qsub 
 
 done 
 ``` 
+This is what each fasta-formatted file would look like
 
 ![](/Pics/fasta_formatted.JPG)
 
-<br> 
-
 #### Generate auxiliary files and directories for each sample 
 
-Generate a list of names of all fasta files in the directory and save them in a text file named "fastafiles.txt" 
+Put a list of names of all fasta files in the directory and save them in a text file named "fastafiles.txt" 
 
-```ls *fasta.gz > fastafiles.txt``` 
+```
+ls *fasta.gz > fastafiles.txt
+``` 
 
 Cut the redundant suffix ".fasta.gz" from the names of all fasta files and generate a new list of file names with the suffix removed in a text file named “targetdirectories.GTF.txt” 
 
-```cat fastafiles.txt |sed 's/.fasta.gz//g' > targetdirectories.GTF.txt``` 
+```
+cat fastafiles.txt |sed 's/.fasta.gz//g' > targetdirectories.GTF.txt
+``` 
 
 Create a separate directory for each sample listed in "fastafiles.txt" 
 
-```cat fastafiles.txt |while read line ; do mkdir ${line/.fasta\.gz/GTFpass1/} ; done``` 
+```
+cat fastafiles.txt |while read line ; do mkdir ${line/.fasta\.gz/GTFpass1/} ; done
+``` 
 
 <br> 
 
@@ -107,13 +116,14 @@ Create a separate directory for each sample listed in "fastafiles.txt"
 
 Add a shebang line at the beginning of your script file named "sendmyof" to indicate the interpreter that should be used to execute the script 
 
-```echo '#!/bin/bash/' > sendmyof ``` 
+```
+echo '#!/bin/bash/' > sendmyof
+``` 
 
-This command runs the "generatesendscriptSingleGTFParam" script with several input parameters to map the RNA-seq data with STAR. The input parameters include the list of target directories containing the input data ("targetdirectories.GTF.txt"), the subdirectory name ("GTFpass1"), a parameter file containing settings for STAR alignment ("Parameters.txt"), a prefix for output files ("myof"), the path to the STAR index directory ("/home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/"), the path to the input data directory ("/home/luc/iPSC/MYOFIBROBLAST/"), the amount of free memory to use ("mem_free=32G"), and the number of threads to use ("8"). 
+The command below runs the "generatesendscriptSingleGTFParam" script with several input parameters to map the RNA-seq data with STAR. The input parameters include the list of target directories containing the input data ("targetdirectories.GTF.txt"), the subdirectory name ("GTFpass1"), a parameter file containing settings for STAR alignment ("Parameters.txt"), a prefix for output files ("myof"), the path to the STAR index directory ("/home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/"), the path to the input data directory ("/home/luc/iPSC/MYOFIBROBLAST/"), the amount of free memory to use ("mem_free=32G"), and the number of threads to use ("8"). 
  
 ``` 
 ./generatesendscriptSingleGTFParam targetdirectories.GTF.txt GTFpass1 Parameters.txt myof /home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/ /home/luc/iPSC/MYOFIBROBLAST/ mem_free=32G 8 >> sendmyof 
-
 ``` 
 
 Change sendmyof into executable mode and run sendmyof 
@@ -123,14 +133,23 @@ chmod a+x sendmyof
 . sendmyof 
 ``` 
 
+It will take less than one day to run through 151 samples and generate each sample a folder which contain every output from STAR
+
 <br> 
 
 #### Create a table summarizing the mapping statistics for each sample 
 
-``` 
-# Extract the headers from the mapping statistics file and store it in “temp2.txt” 
-grep "|" 008iP22TGFbM_S71GTFpass1/008iP22TGFbM_S71GTFpass1Log.final.out | cut -f 1 -d "|" | sed 's/^  *//g' | awk 'NR>3 {print}' > temp2.txt 
+Change directory into one sample file which ends with "GTFpass1". Extract the first column from the mapping statistics file and store it in “temp2.txt” 
 
+``` 
+grep "|" 008iP22TGFbM_S71GTFpass1/008iP22TGFbM_S71GTFpass1Log.final.out | cut -f 1 -d "|" | sed 's/^  *//g' | awk 'NR>3 {print}' > temp2.txt 
+```
+
+The first column from the mapping statistics file
+
+![](/Pics/mapping_statistics.jpg)
+
+```
 
 # Create an empty temporary file for storing intermediate results 
 rm tempprev.txt 
