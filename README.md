@@ -256,7 +256,7 @@ I am going to use "RBarretTNFATGFB_antisense.ALL.cnt" file for the further analy
 ```
 RBarretTNFATGFBCnt = textread('RBarretTNFATGFB_antisense.ALL.cnt','');
 RBarretsamplesTNFATGFB = textread('RBarretTNFATGFBsamples.txt','%s');
-RBarretsampleskeysTNFATGFB = textread('samplekeys.txt','%s');
+RBarretsampleskeysTNFATGFB = textread('samplekeys_Sam.txt','%s');
 RBarretTNFATGFBmeta_seqdepth=round(sum(RBarretTNFATGFBCnt)/1000000);
 
 Gencode_33_Selected_MappSS=textread('mappability and R code/gencode.v33.Selected.ReadsPerGene.out.MappSS.txt','');
