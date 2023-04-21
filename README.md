@@ -90,6 +90,8 @@ This is what each fasta-formatted file would look like
 
 ![](/Pics/fasta_formatted.JPG)
 
+<br>
+
 #### Generate auxiliary files and directories for each sample 
 
 Put a list of names of all fasta files in the directory and save them in a text file named "fastafiles.txt" 
@@ -149,6 +151,8 @@ The first column from the mapping statistics file
 
 ![](/Pics/mapping_statistics.jpg)
 
+<br>
+
 Create an empty temporary file for storing intermediate results 
 
 ```
@@ -178,6 +182,8 @@ The mappingstatsFirstpass.txt would look like this
 
 ![](/Pics/mappingstatsFirstpass.jpg)
 
+<br> 
+
 #### Compile Counts 
 
 Generate a directory called "COUNTS" and copy all gene count files to this folder. 
@@ -187,14 +193,15 @@ mkdir COUNTS
 cp *pass1/*PerGene* COUNTS/ 
 ``` 
 
-Create count tables for sense, anti-sense, nostrand, ambiguous, and nofeature reads  
+Clean filenames 
 
 ``` 
-# Clean filenames 
 ls *tab|while read line ; do mv $line ${line/GTFpass1ReadsPerGene.out/} ; done 
+```
 
+For each count file, extract and create the five count tables
 
-# For each count file, extract the necessary information to create the five count tables 
+```
 ls *.tab | while read line ; do 
 echo $line 
 cat $line | awk 'NR==3{print}' | cut -f 2- > ${line/tab/nofeature\.tab} 
@@ -203,18 +210,25 @@ cat $line | awk 'NR>4{print}' | cut -f 2 > ${line/tab/nostrand\.tab}
 cat $line | awk 'NR>4{print}' | cut -f 3 > ${line/tab/sense\.tab} 
 cat $line | awk 'NR>4{print}' | cut -f 4 > ${line/tab/antisense\.tab} 
 done 
+```
 
+Make a Geneid list from one of the count tables as "countsannot_GRCh38.primary.Selected.Geneid.txt"
 
-# Extract gene IDs from one of the count tables 
+```
 ls 008iP22TGFbM_S71.tab | head -1 | while read line; do  
 cut -f 1 $line | awk 'NR>4{print}' > countsannot_GRCh38.primary.Selected.Geneid.txt 
 done 
+```
 
+Create a file listing the names of all samples as "RBarretTNFATGFBsamples.txt"
 
-# Create a file listing the names of all samples 
+```
 ls *.sense.tab | sed 's/.sense.tab//g' | tr -s " " "\n" | sed 's/_1//g' > RBarretTNFATGFBsamples.txt 
+```
 
+Make count tables for sense, anti-sense, nostrand, ambiguous, and nofeature reads
 
+```  
 # Combine all sense counts into RBarretTNFATGFB_sense.ALL.cnt 
 paste *.sense.tab > RBarretTNFATGFB_sense.ALL.cnt   
 
@@ -230,6 +244,8 @@ cat *ambiguous.tab > RBarretTNFATGFB_ambiguous.cnt
 # Combine all nofeature counts into RBarretTNFATGFB_nofeature.cnt 
 cat *nofeature.tab > RBarretTNFATGFB_nofeature.cnt 
 ``` 
+
+In the future step, I am going to use "RBarretTNFATGFB_antisense.ALL.cnt" file
 
 <br> 
 
