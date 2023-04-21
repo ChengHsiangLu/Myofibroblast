@@ -149,28 +149,34 @@ The first column from the mapping statistics file
 
 ![](/Pics/mapping_statistics.jpg)
 
+Create an empty temporary file for storing intermediate results 
+
+```
+rm tempprev.txt 
+touch tempprev.txt
 ```
 
-# Create an empty temporary file for storing intermediate results 
-rm tempprev.txt 
-touch tempprev.txt 
+Extract the total mapped reads from each subsequent mapping statistics file and combine with previous results 
 
-
-# Extract the total mapped reads from each subsequent mapping statistics file and combine with previous results 
+```
 ls *pass1/*final.out | while read line ; do  
 grep "|" $line | cut -f 2  > temp.txt 
 paste tempprev.txt temp.txt > tempnew.txt 
 mv tempnew.txt tempprev.txt 
 done 
+```
 
+Remove the first column and write the final results to a file called “mappingstatsFirstpass.txt” 
 
-# Remove the first column and write the final results to a file called “mappingstatsFirstpass.txt” 
+```
 cut -f 2- tempprev.txt | awk 'NR>3 {print}'  > tempnew.txt 
 mv tempnew.txt tempprev.txt 
 paste temp2.txt tempprev.txt > mappingstatsFirstpass.txt 
 ``` 
 
-<br> 
+The mappingstatsFirstpass.txt would look like this
+
+![](/Pics/mappingstatsFirstpass.jpg)
 
 #### Compile Counts 
 
