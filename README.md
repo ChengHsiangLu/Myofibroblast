@@ -251,14 +251,24 @@ I am going to use "RBarretTNFATGFB_antisense.ALL.cnt" file for the further analy
 
 ### In MATLAB
 
-#### Transfer counts, annotation, and mappability to your local laptop
+#### Transfer data to your local laptop
+
+Read counts, annotation, and mappability
 
 ```
 RBarretTNFATGFBCnt = textread('RBarretTNFATGFB_antisense.ALL.cnt','');
 RBarretsamplesTNFATGFB = textread('RBarretTNFATGFBsamples.txt','%s');
 RBarretsampleskeysTNFATGFB = textread('samplekeys_Sam.txt','%s');
-RBarretTNFATGFBmeta_seqdepth=round(sum(RBarretTNFATGFBCnt)/1000000);
 
+% Calculates the sum of the counts in RBarretTNFATGFBCnt, divides the result by 1000000, and rounds the result to the nearest integer. 
+RBarretTNFATGFBmeta_seqdepth=round(sum(RBarretTNFATGFBCnt)/1000000);
+```
+
+#### Import annotation
+
+You can find these annotation in the "mappability and R code" folder
+
+```
 Gencode_33_Selected_MappSS=textread('mappability and R code/gencode.v33.Selected.ReadsPerGene.out.MappSS.txt','');
 Gencode_33_Selected_MappUS=textread('mappability and R code/gencode.v33.Selected.ReadsPerGene.out.MappUS.txt','');
 Gencode_33_Selected_Geneid=textread('mappability and R code/gencode.v33.annotation.Selected.geneid.txt','%s\n');
@@ -268,14 +278,19 @@ Gencode_33_Selected_Genename=textread('mappability and R code/gencode.v33.annota
 
 #### Compile counts
 
+Normalize counts by TPM
+
 ```
 RBarretTNFATGFBTPM = RBarretTNFATGFBCnt;
 for i=1:size(RBarretTNFATGFBCnt,1)
+% Divids the gene count matrix RBarretTNFATGFBCnt by Gencode_33_Selected_MappSS matrix, which is the sum of the transcript length of each gene
 RBarretTNFATGFBTPM(i,:) = RBarretTNFATGFBCnt(i,:)/Gencode_33_Selected_MappSS(i)*1000;
 end
+% Sets any NaN or Inf values resulting from the normalization process to 0
 RBarretTNFATGFBTPM(isnan(RBarretTNFATGFBTPM)) = 0;
 RBarretTNFATGFBTPM(isinf(RBarretTNFATGFBTPM)) = 0;
 for i=1:size(RBarretTNFATGFBTPM,2)
+% Scale the TPM values so that the sum of expression values across each sample of the matrix is equal to 1,000,000. This ensures that the expression values are comparable across different samples and allows meaningful comparisons of gene expression levels between different samples.
 RBarretTNFATGFBTPM(:,i) = RBarretTNFATGFBTPM(:,i)/sum(RBarretTNFATGFBTPM(:,i))*1000000;
 end
 ```
