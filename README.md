@@ -319,7 +319,6 @@ thisdistmat = squareform(thisdist/10000);
 thistree = seqlinkage(thisdistmat,'average', RBarretsamplesTNFATGFB)
 plot(thistree, 'ORIENTATION', 'top')
 ```
-We can tell that basically the plot is clustered by their treatments.
 
 ![](/Pics/first_dendrogram.jpg)
 
@@ -449,9 +448,11 @@ thistree = seqlinkage(thisdistmat,'average', RBarretsampleskeysTNFATGFB)
 plot(thistree,'ORIENTATION','top')
 ```
 
-<br>
+We can tell that basically the plot is clustered by their treatments.
 
 ![](/Pics/Second_dendrogram.jpg)
+
+<br>
 
 #### What is the percent of the top 100 genes
 
