@@ -120,7 +120,7 @@ Add a shebang line at the beginning of your script file named "sendmyof" to indi
 echo '#!/bin/bash/' > sendmyof
 ``` 
 
-The command below runs the "generatesendscriptSingleGTFParam" script with several input parameters to map the RNA-seq data with STAR. The input parameters include the list of target directories containing the input data ("targetdirectories.GTF.txt"), the subdirectory name ("GTFpass1"), a parameter file containing settings for STAR alignment ("Parameters.txt"), a prefix for output files ("myof"), the path to the STAR index directory ("/home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/"), the path to the input data directory ("/home/luc/iPSC/MYOFIBROBLAST/"), the amount of free memory to use ("mem_free=32G"), and the number of threads to use ("8"). In the end, it will generate a "processLaneSingleGTFParam" file in each sample's folder and run the STAR package.
+The command below runs the "generatesendscriptSingleGTFParam" script with several input parameters to map the RNA-seq data with STAR. The input parameters include the list of target directories containing the input data ("targetdirectories.GTF.txt"), the subdirectory name ("GTFpass1"), a parameter file containing settings for STAR alignment ("Parameters.txt"), a prefix for output files ("myof"), the path to the STAR index directory ("/home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/"), the path to the input data directory ("/home/luc/iPSC/MYOFIBROBLAST/"), the amount of free memory to use ("mem_free=32G"), and the number of threads to use ("8"). In the end, it will generate a "processLaneSingleGTFParam" file and run the STAR package in each sample's folder.
  
 ``` 
 ./generatesendscriptSingleGTFParam targetdirectories.GTF.txt GTFpass1 Parameters.txt myof /home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/ /home/luc/iPSC/MYOFIBROBLAST/ mem_free=32G 8 >> sendmyof 
@@ -276,7 +276,10 @@ Gencode_33_Selected_Genename=textread('mappability and R code/gencode.v33.annota
 
 #### Compile counts
 
-Normalize counts by TPM
+First, initializes a new variable called RBarretTNFATGFBTPM with the same count data as RBarretTNFATGFBCnt.
+Then, iterates over each gene in the count data matrix. For each gene, the corresponding row in RBarretTNFATGFBTPM is updated by dividing the count data by the read counts from the "Gencode_33_Selected_MappSS", multiplying by 1000, and storing the result in RBarretTNFATGFBTPM.
+
+Finally, iterates over each sample in the TPM data matrix. For each sample, the corresponding column in RBarretTNFATGFBTPM is updated by dividing the values in the column by the sum of the values in the column, multiplying by 1,000,000, and storing the result in RBarretTNFATGFBTPM. This step **normalizes the TPM values** across samples and scales the resulting values to TPM.
 
 ```
 RBarretTNFATGFBTPM = RBarretTNFATGFBCnt;
@@ -292,7 +295,18 @@ for i=1:size(RBarretTNFATGFBTPM,2)
 RBarretTNFATGFBTPM(:,i) = RBarretTNFATGFBTPM(:,i)/sum(RBarretTNFATGFBTPM(:,i))*1000000;
 end
 ```
-#### Make first dendrogram
+<br>
+
+#### Make my first dendrogram
+
+Make a dendrogram to visualize the relationships among samples in the RBarretTNFATGFB dataset based on their gene expression profiles. 
+1. I generates a random selection of 1,000 genes from the TPM data matrix.
+2. Calculates the pairwise distances between the selected genes.
+3. Creates a for loop that iterates 9,999 times. For each iteration, a new random selection of 1,000 genes is generated, and the pairwise distances between these genes are added to the previous 'thisdist' calculation.
+4. Converts the one-dimensional distance vector 'thisdist' into a distance matrix 'thisdistmat' using the 'squareform' function.
+5. Generates a hierarchical clustering tree based on the distance matrix 'thisdistmat'.
+
+Overall, I perform a clustering analysis on a subset of genes in the RBarretTNFATGFB dataset to visualize the relationships among samples based on their gene expression profiles.
 
 ```
 thisrand = unique(randi([1 size(RBarretTNFATGFBTPM,1)],1,1000));
@@ -305,6 +319,9 @@ thisdistmat = squareform(thisdist/10000);
 thistree = seqlinkage(thisdistmat,'average', RBarretsamplesTNFATGFB)
 plot(thistree)
 ```
+![](/Pics/first_dendrogram.jpg)
+
+<br>
 
 #### Biotypes
 
