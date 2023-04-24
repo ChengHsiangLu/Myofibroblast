@@ -456,7 +456,10 @@ We can tell that basically the plot is clustered by their treatments.
 
 #### What is the percent of the top 100 genes
 
+Calculates the top 100 expressed genes in each sample based on their transcript per million (TPM) values in the RBarretTNFATGFBTPM_GMask matrix.
+
 ```
+% iterates over 151 samples, it first sorts the TPM values of all genes in descending order and stores the indices of the sorted genes in y. The top 100 expressed genes in the sample are obtained by selecting the first 100 indices in y, and these indices are appended to a running list of all top 100 indices yall.
 yall=[];
 for i=1:151
 [x y]=sort(RBarretTNFATGFBTPM_GMask(:,i),'descend');
@@ -464,6 +467,9 @@ yall=unique([y(1:100); yall]);
 top100percent(i)=sum(RBarretTNFATGFBTPM_GMask(y(1:100),i))/1000000;
 end
 ```
+After calculating the sum of the percent of the top 100 genes, it is 58.25%.
+
+In the end, we store the **Gencode\_33\_Selected\_Geneid\_GMask.txt, Gencode\_33\_Selected\_Genename\_GMask.txt, Gencode\_33\_Selected\_MappSS\_GMask.txt, RBarretTNFATGFBTPM\_GMask.txt, and RBarretTNFATGFBCnt\_GMask.txt** for ours further analysis.
 
 ```
 writetable(cell2table(Gencode_33_Selected_Geneid_GMask),'Gencode_33_Selected_Geneid_GMask.txt','WriteVariableNames',0)
@@ -471,7 +477,6 @@ writetable(cell2table(Gencode_33_Selected_Genename_GMask),'Gencode_33_Selected_G
 dlmwrite('Gencode_33_Selected_MappSS_GMask.txt', Gencode_33_Selected_MappSS_GMask,'delimiter','\t')
 dlmwrite('RBarretTNFATGFBTPM_GMask.txt', RBarretTNFATGFBTPM_GMask,'delimiter','\t')
 dlmwrite('RBarretTNFATGFBCnt_GMask.txt', RBarretTNFATGFBCnt_GMask,'delimiter','\t')
-%writetable(cell2table(RBarretsamplesTNFATGFB),'RBarretsamplesTNFATGFB.txt','WriteVariableNames',0)
 ```
 
 ### In R
