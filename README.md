@@ -317,26 +317,36 @@ thisdist = thisdist+pdist(RBarretTNFATGFBTPM(thisrand,:)');
 end
 thisdistmat = squareform(thisdist/10000);
 thistree = seqlinkage(thisdistmat,'average', RBarretsamplesTNFATGFB)
-plot(thistree)
+plot(thistree, 'ORIENTATION', 'top')
 ```
+We can tell that basically the plot is clustered by their treatments.
+
 ![](/Pics/first_dendrogram.jpg)
 
 <br>
 
-#### Biotypes
+#### All biotypes counts percents
+
+This part of codes is performing all biotypes counts percents across multiple samples. 
 
 ```
+% Used the unique function and stored the allbiotypes variable.
 allbiotypes = unique(Gencode_33_Selected_Biotype);
 
+% Created A cell array allbiotypeslength to store the lengths of each biotype name.
 allbiotypeslength = cell(length(allbiotypes),1);
+
+% Two new matrices, allbiotypescounts and allbiotypescountspercents, are initialized with zeros. These matrices have dimensions (number of unique biotypes) x (number of samples in the TPM data). They will be used to store the number of reads (counts) and the percentage of total reads (%TPM) for each biotype in each sample.
 allbiotypescounts = zeros(length(allbiotypes),size(RBarretTNFATGFBCnt,2));
 allbiotypescountspercents = zeros(length(allbiotypes),size(RBarretTNFATGFBCnt,2));
 
-
 for i=1:length(allbiotypes)
+%  Found all the indices of Gencode_33_Selected_Biotype that match the current biotype. Then, returned a vector of **indices** where the biotype occurs in Gencode_33_Selected_Biotype.
 temp = strmatch(allbiotypes{i}, Gencode_33_Selected_Biotype);
+% Stored the length of the temp vector represents the number of genes with the current biotype in the Gencode_33_Selected_Biotype.
 allbiotypeslength{i} = length(temp);
 if length(temp)>1
+% Sum the expression values for all genes with the current biotype across all samples. The resulting sums are stored in the corresponding row of the allbiotypescounts matrix.
 allbiotypescounts(i,:) = sum(RBarretTNFATGFBCnt(strmatch(allbiotypes{i}, Gencode_33_Selected_Biotype),:)); 
 allbiotypescountspercents(i,:) = allbiotypescounts(i,:)./sum(RBarretTNFATGFBCnt)*100; 
 end
@@ -345,6 +355,13 @@ end
 dlmwrite('allbiotypescountspercents.txt', allbiotypescountspercents,'delimiter','\t')
 writetable(cell2table(allbiotypes),'allbiotypes.txt','WriteVariableNames',0)
 ```
+
+I Formulated a spreadsheet by using "allbiotypes.txt" and "allbiotypescountspercents.txt" on Excel and add min, max, and average for each biotype. You can find my spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx).
+
+
+
+<br>
+
 #### Keep only protein coding genes
 
 ```
