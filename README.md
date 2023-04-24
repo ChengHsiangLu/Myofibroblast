@@ -356,7 +356,7 @@ dlmwrite('allbiotypescountspercents.txt', allbiotypescountspercents,'delimiter',
 writetable(cell2table(allbiotypes),'allbiotypes.txt','WriteVariableNames',0)
 ```
 
-I Formulated a spreadsheet by using "allbiotypes.txt" and "allbiotypescountspercents.txt" on Excel and add min, max, and average for each biotype. You can find my spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx).
+I Formulated a spreadsheet by using "allbiotypes.txt" and "allbiotypescountspercents.txt" on Excel and add min, max, and average for each biotype. You can find my spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx). As you can see, protein_coding genes have the average of 98.65% among other biotypes, which is what we want.
 
 ![](/Pics/spreadsheet_allbiotypescountspercents.jpg)
 
@@ -364,33 +364,46 @@ I Formulated a spreadsheet by using "allbiotypes.txt" and "allbiotypescountsperc
 
 #### Keep only protein coding genes
 
+We are going to keep only protein coding genes for the next step.
+
 ```
 allbiotypes=unique(Gencode_33_Selected_Biotype);
+% Found the 15th unique value, which is protein_coding, of Gencode_33_Selected_Biotype in the array proteincodingindx.
 proteincodingindx = strmatch(allbiotypes{15}, Gencode_33_Selected_Biotype);
 biotypeindx = proteincodingindx;
 
-additionalgenes = [strmatch('MT-',Gencode_33_Selected_Genename) ; strmatch('H1',Gencode_33_Selected_Genename); strmatch('H2',Gencode_33_Selected_Genename); strmatch('H3',Gencode_33_Selected_Genename); strmatch('H4',Gencode_33_Selected_Genename) ; strmatch('RPL',Gencode_33_Selected_Genename) ; strmatch('RPS',Gencode_33_Selected_Genename)];																
+% Created an array additionalgenes contains the indices of genes that have certain prefixes such as 'MT-', 'H1', 'H2', 'H3', 'H4', 'RPL', or 'RPS' in their names.
+additionalgenes = [strmatch('MT-',Gencode_33_Selected_Genename) ; strmatch('H1',Gencode_33_Selected_Genename); strmatch('H2',Gencode_33_Selected_Genename); strmatch('H3',Gencode_33_Selected_Genename); strmatch('H4',Gencode_33_Selected_Genename) ; strmatch('RPL',Gencode_33_Selected_Genename) ; strmatch('RPS',Gencode_33_Selected_Genename)];
+
+% Created an array nonadditionalgenes with the same length as the Gencode_33_Selected_Genename array.	
 nonadditionalgenes = 1:length(Gencode_33_Selected_Genename);
+% Removed the indices of genes in additionalgenes from the nonadditionalgenes array.
 nonadditionalgenes(additionalgenes) = [];
 
+% mappableindx containing the indices of elements in the Gencode_33_Selected_MappSS array that are greater than 50.
 mappableindx = find(Gencode_33_Selected_MappSS>50);
 ```
 
 ```
+% a new variable finalIndexGeneric which is the intersection of three other variables: biotypeindx, nonadditionalgenes, and mappableindx.
 finalIndexGeneric = intersect(biotypeindx,intersect(nonadditionalgenes,mappableindx));			
+% finds the indices of rows in RBarretTNFATGFBCnt that have a sum greater than 150. 
+countindx = find(sum(RBarretTNFATGFBCnt')'>150);
 
-countindx = find(sum(RBarretTNFATGFBCnt')'>150);	
-finalIndexGeneric=intersect(finalIndexGeneric,countindx);						
+% updates finalIndexGeneric to be the intersection of finalIndexGeneric and countindx.
+finalIndexGeneric=intersect(finalIndexGeneric,countindx);
+```						
 
-	
+```
+% creates a new variable RBarretTNFATGFBCnt_GMask which is a subset of RBarretTNFATGFBCnt corresponding to the rows indexed by finalIndexGeneric.
 RBarretTNFATGFBCnt_GMask = RBarretTNFATGFBCnt(finalIndexGeneric,:);
 
 Gencode_33_Selected_Geneid_GMask = Gencode_33_Selected_Geneid(finalIndexGeneric);
 Gencode_33_Selected_Genename_GMask = Gencode_33_Selected_Genename(finalIndexGeneric);
 Gencode_33_Selected_MappSS_GMask = Gencode_33_Selected_MappSS(finalIndexGeneric);
 Gencode_33_Selected_MappUS_GMask = Gencode_33_Selected_MappUS(finalIndexGeneric);
-
-
+```
+```
 RBarretTNFATGFBExpression_GMask = RBarretTNFATGFBCnt_GMask;
 for i=1:size(RBarretTNFATGFBExpression_GMask,2)
 RBarretTNFATGFBExpression_GMask(:,i) = RBarretTNFATGFBCnt_GMask(:,i)/sum(RBarretTNFATGFBCnt_GMask(:,i))*1000000;
