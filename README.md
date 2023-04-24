@@ -404,6 +404,7 @@ Gencode_33_Selected_MappSS_GMask = Gencode_33_Selected_MappSS(finalIndexGeneric)
 Gencode_33_Selected_MappUS_GMask = Gencode_33_Selected_MappUS(finalIndexGeneric);
 ```
 ```
+% normalizes the expression data like we do previously
 RBarretTNFATGFBExpression_GMask = RBarretTNFATGFBCnt_GMask;
 for i=1:size(RBarretTNFATGFBExpression_GMask,2)
 RBarretTNFATGFBExpression_GMask(:,i) = RBarretTNFATGFBCnt_GMask(:,i)/sum(RBarretTNFATGFBCnt_GMask(:,i))*1000000;
@@ -414,11 +415,13 @@ end
 RBarretTNFATGFBExpression_GMask(isnan(RBarretTNFATGFBExpression_GMask)) = 0;
 RBarretTNFATGFBExpression_GMask(isinf(RBarretTNFATGFBExpression_GMask)) = 0;
 
+% RBarretTNFATGFBCPM_GMask contains the expression data normalized only by CPM, using the same normalization method as the code above.
 RBarretTNFATGFBCPM_GMask = zeros(size(RBarretTNFATGFBCnt_GMask));
 for i=1:size(RBarretTNFATGFBCnt_GMask,2)
 RBarretTNFATGFBCPM_GMask(:,i) = RBarretTNFATGFBCnt_GMask(:,i)/sum(RBarretTNFATGFBCnt_GMask(:,i))*1000000;
 end
 
+% RBarretTNFATGFBTPM_GMask contains the expression data normalized only by TPM.
 RBarretTNFATGFBTPM_GMask = RBarretTNFATGFBCnt_GMask;
 for i=1:size(RBarretTNFATGFBCnt_GMask,1)
 RBarretTNFATGFBTPM_GMask(i,:) = RBarretTNFATGFBCnt_GMask(i,:)/Gencode_33_Selected_MappSS_GMask(i)*1000;
@@ -430,7 +433,9 @@ RBarretTNFATGFBTPM_GMask(:,i) = RBarretTNFATGFBTPM_GMask(:,i)/sum(RBarretTNFATGF
 end
 ```
 
-#### Make second dendrogram(the clustering is by treatment)
+#### Make dendrogram with only protein coding genes
+
+Perform hierarchical clustering on a subset of the gene expression data stored in the variable RBarretTNFATGFBTPM_GMask with only protein coding genes.
 
 ```
 thisrand = unique(randi([1 size(RBarretTNFATGFBTPM_GMask,1)],1,1000));
@@ -443,6 +448,11 @@ thisdistmat = squareform(thisdist/10000);
 thistree = seqlinkage(thisdistmat,'average', RBarretsampleskeysTNFATGFB)
 plot(thistree,'ORIENTATION','top')
 ```
+
+<br>
+
+![](/Pics/Second_dendrogram.jpg)
+
 #### What is the percent of the top 100 genes
 
 ```
