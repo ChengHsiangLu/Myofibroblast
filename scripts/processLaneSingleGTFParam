@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cp $3 Parameters1.in
+
+echo '#!/bin/bash' > $4
+echo  "/home/luc/TOOLS/STAR-2.7.3a/bin/Linux_x86_64_static/STAR --runMode alignReads --runThreadN " $8 " --outFileNamePrefix " $2 " --outStd Log --genomeDir " $5 " --readFilesIn "$6$1 " --parametersFiles Parameters1.in" >> $4
+
+chmod a+x $4
+qsub -q 256gb.q,matlab.q,cgroup.q -cwd -o $PWD -e $PWD -l $7 -pe mpich $8 ./$4
+
