@@ -358,7 +358,7 @@ writetable(cell2table(allbiotypes),'allbiotypes.txt','WriteVariableNames',0)
 
 I Formulated a spreadsheet by using "allbiotypes.txt" and "allbiotypescountspercents.txt" on Excel and add min, max, and average for each biotype. You can find my spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx).
 
-![](/Pics/spreadsheet_ allbiotypescountspercents.jpg)
+![](/Pics/spreadsheet_allbiotypescountspercents.jpg)
 
 <br>
 
