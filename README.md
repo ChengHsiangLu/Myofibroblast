@@ -57,8 +57,6 @@ In this project, we will be analyzing RNA-seq data from 19 samples, comprising o
 
 #### Convert 151 Fastq to Fasta files 
 
- 
-
 First, I put all fasq.gz files in one folder and list all fastq files’ name in fastqfiles.txt 
 
 ```
