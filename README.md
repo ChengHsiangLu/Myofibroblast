@@ -544,6 +544,8 @@ In the PCA plot, there are 4 different groups separate by treatment. We have the
 Each bar plot represents the loadings of all samples on a given principal component. A red line is also drawn at position 72 in order to separate the non-fibrotic group and the fibrotic group. The color of each bar represents the batch of the sample, with a unique color assigned to each batch. The vertical lines on the plot indicate the position of specific loadings, with thin and thick lines indicating different positions. 
 ```# The resulting vector coul will contain 12 colors from the "Set3" palette.library(RColorBrewer)coul <- brewer.pal(12, "Set3")# generates colors for a plot based on the batch variablecolors=pcabatchR$Batchallbatches<-unique(pcabatchR$Batch)for (i in 1:38){  colors[pcabatchR$Batch==allbatches[i]]<-coul[i%%12+1]}thinlines=c(seq(4,72,8),75,seq(83,151,8))thicklines=c(seq(8,72,8),79,seq(87,151,8))# first half of the barplot would be the non-fibrotic group and the second part would be the fibrotic group# The order would be CC, TG, TN, TTsamplesorder=c(4,1,3,2,8,5,7,6,28,25,27,26,32,29,31,30,36,33,35,34,40,37,39,38,52,49,51,50,55,53,55,54,68,65,67,66,72,69,71,70,76,73,75,74,80,77,79,78,84,81,83,82,88,85,87,86,116,113,115,114,120,117,119,118,139,136,138,137,143,140,142,141,12,9,11,10,16,13,15,14,20,17,19,18,24,21,23,22,44,41,43,42,48,45,47,46,60,57,59,58,64,61,63,62,92,89,91,90,96,93,95,94,100,97,99,98,104,101,103,102,108,105,107,106,112,109,111,110,124,121,123,122,128,125,127,126,132,129,131,130,135,133,134,147,144,146,145,151,148,150,149)#create 38 barplots and saving each of them as a PNG filefor (i in 1:38) {  filename = paste("PC_",i,".png", sep = "")  png(filename)  barplot(pcabatchALL[samplesorder,i],col=colors[samplesorder],las=2,xaxt='n',space=0)  for (i in 1:length(thinlines)) {    abline(v = thinlines[i], col = "black",lty = 3)  }  for (i in 1:length(thicklines)) {    abline(v = thicklines[i], col = "black",lty = 1)  }  abline(v = 72, col = "red",lty = 1)  dev.off()}write.csv(aloadrelativebatch,file="aloadrelativeMask_batchmodel_filtered.csv")write.csv(pcabatch$x,file="pca_batchmodel_x.csv")```
 
+![](/Pics/PCs/PC_1.png)
+
 #### PCA rank matrix
 
 Takes csv files and converts it to the txt files with the second column onwards. It does this by first removing the first row using awk, replacing multiple commas with tabs using tr, and removing the first column using cut.
@@ -616,7 +618,7 @@ The third sheet includes Genename, Geneid, Mapp, PC1, PC2, PC3, and  patient's T
 paste Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_Geneid_GMask.txt Gencode_33_Selected_MappSS_GMask.txt pcarankmatrix.txt  > combine_test.txt
 # In R
 # spreadsheetsheet3_1 <- list("Genename","Genename","Geneid","Mapp","PC1","PC2","PC3")sheet3_2<- sampleKeyTNFATGFBcombined_headers <- c(sheet3_1, sheet3_2)combined_spreadsheet <- as.matrix(read.table("combine_test.txt"))colnames(combined_spreadsheet) <- combined_headerscombined_spreadsheet <- combined_spreadsheet[order(combined_spreadsheet[,1]),] #sort by the first columnwrite.table(combined_spreadsheet,file="combined_spreadsheet.txt", sep = "\t", row.names = FALSE)```
-In Excel, by sorting the spreadsheet,
+In Excel, by sorting the spreadsheet with PC1,
 
 
 ![](/Pics/spreadsheet.png)
