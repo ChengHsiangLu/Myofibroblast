@@ -548,9 +548,9 @@ Each bar plot represents the loadings of all samples on a given principal compon
 
 By making a spread sheet, we can easily manage our data by a single glance. I will use command line, Excel and R to orginize it.
 
-The first sheet contains patients order, patients id, phenotypes, and sex. I build it on Excel. You can visit the sheet by clicking [here]().
+The first sheet contains patients order, patients id, phenotypes, and sex. I build it on Excel. You can visit the sheet by clicking [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER).
 
-
+![](/Pics/spreadsheet_patient.png)
 
 
 ```# allbiotypes_percentssheet2_1 <- list("Biotypes")sheet2_2 <- sampleKeyTNFATGFBcombined_sheet2 <- c(sheet2_1, sheet2_2)combined_spreadsheet2 <- as.matrix(read.table("combine_allbiotypes_percents.txt"))colnames(combined_spreadsheet2) <- combined_sheet2write.table(combined_spreadsheet2,file="combined_spreadsheet2.txt", sep = "\t", row.names = FALSE)# sheeet3sheet3_1 <- list("Genename","Genename","Geneid","Mapp","PC1","PC2","PC3")sheet3_2<- sampleKeyTNFATGFBcombined_headers <- c(headers_1, headers_2)combined_spreadsheet <- as.matrix(read.table("combine_test.txt"))colnames(combined_spreadsheet) <- combined_headerscombined_spreadsheet <- combined_spreadsheet[order(combined_spreadsheet[,1]),] #sort by the first columnwrite.table(combined_spreadsheet,file="combined_spreadsheet.txt", sep = "\t", row.names = FALSE)#clean these two csv files in terminal and in matlab
