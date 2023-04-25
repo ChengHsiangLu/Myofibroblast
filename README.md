@@ -605,11 +605,13 @@ The first sheet built on Excel contains patients order, patients id, phenotypes,
 The second sheet includes the names and percentages of all biotypes, along with their respective minimum, maximum, and average values, providing us with a comprehensive overview.
 
 ```
+
 # In terminal
 paste allbiotypes allbiotypescountspercents > combine_allbiotypes_percents.txt
 
 # In R# allbiotypes_percentssheet2_1 <- list("Biotypes")sheet2_2 <- sampleKeyTNFATGFBcombined_sheet2 <- c(sheet2_1, sheet2_2)combined_spreadsheet2 <- as.matrix(read.table("combine_allbiotypes_percents.txt"))colnames(combined_spreadsheet2) <- combined_sheet2write.table(combined_spreadsheet2,file="combined_spreadsheet2.txt", sep = "\t", row.names = FALSE)
 # add their respective minimum, maximum, and average values on Excel
+
 ```
 ![](/Pics/spreadsheet_allbiotypes_percents.png)
 
