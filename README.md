@@ -548,7 +548,7 @@ Each bar plot represents the loadings of all samples on a given principal compon
 
 By making a spread sheet, we can easily manage our data by a single glance. I will use command line, Excel and R to orginize it.
 
-The first sheet contains patients order, patients id, phenotypes, and sex. I build it on Excel. You can visit the sheet by clicking [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER).
+The first sheet contains patients order, patients id, phenotypes, and sex. I build it on Excel. You can visit the sheet by clicking [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx).
 
 ![](/Pics/spreadsheet_patient.png)
 
