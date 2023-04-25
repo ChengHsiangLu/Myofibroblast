@@ -546,14 +546,37 @@ Each bar plot represents the loadings of all samples on a given principal compon
 
 #### Spreadsheet
 
-By making a spread sheet, we can easily manage our data by a single glance. I will use command line, Excel and R to orginize it.
+By making a spread sheet, we can easily manage our data by a single glance. I used command line, Excel and R to orginize it.
 
-The first sheet contains patients order, patients id, phenotypes, and sex. I build it on Excel. You can visit the sheet by clicking [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx).
+The first sheet built on Excel contains patients order, patients id, phenotypes, and sex. You can visit the sheet by clicking [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx).
 
 ![](/Pics/spreadsheet_patient.png)
 
+<br>
 
-```# allbiotypes_percentssheet2_1 <- list("Biotypes")sheet2_2 <- sampleKeyTNFATGFBcombined_sheet2 <- c(sheet2_1, sheet2_2)combined_spreadsheet2 <- as.matrix(read.table("combine_allbiotypes_percents.txt"))colnames(combined_spreadsheet2) <- combined_sheet2write.table(combined_spreadsheet2,file="combined_spreadsheet2.txt", sep = "\t", row.names = FALSE)# sheeet3sheet3_1 <- list("Genename","Genename","Geneid","Mapp","PC1","PC2","PC3")sheet3_2<- sampleKeyTNFATGFBcombined_headers <- c(headers_1, headers_2)combined_spreadsheet <- as.matrix(read.table("combine_test.txt"))colnames(combined_spreadsheet) <- combined_headerscombined_spreadsheet <- combined_spreadsheet[order(combined_spreadsheet[,1]),] #sort by the first columnwrite.table(combined_spreadsheet,file="combined_spreadsheet.txt", sep = "\t", row.names = FALSE)#clean these two csv files in terminal and in matlab
+The second sheet includes the names and percentages of all biotypes, along with their respective minimum, maximum, and average values, providing us with a comprehensive overview.
+
+```
+# In terminal
+paste allbiotypes allbiotypescountspercents > combine_allbiotypes_percents.txt
+
+# In R# allbiotypes_percentssheet2_1 <- list("Biotypes")sheet2_2 <- sampleKeyTNFATGFBcombined_sheet2 <- c(sheet2_1, sheet2_2)combined_spreadsheet2 <- as.matrix(read.table("combine_allbiotypes_percents.txt"))colnames(combined_spreadsheet2) <- combined_sheet2write.table(combined_spreadsheet2,file="combined_spreadsheet2.txt", sep = "\t", row.names = FALSE)
+# add their respective minimum, maximum, and average values on Excel
+```
+![](/Pics/spreadsheet_allbiotypes_percents.png)
+
+<br>
+
+The third sheet includes Genename, Geneid, Mapp, PC1, PC2, PC3, and  patient's TPM values.
+
+```
+# In terminal
+paste Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_Geneid_GMask.txt Gencode_33_Selected_MappSS_GMask.txt pcarankmatrix.txt  > combine_test.txt
+# In R
+# spreadsheetsheet3_1 <- list("Genename","Genename","Geneid","Mapp","PC1","PC2","PC3")sheet3_2<- sampleKeyTNFATGFBcombined_headers <- c(sheet3_1, sheet3_2)combined_spreadsheet <- as.matrix(read.table("combine_test.txt"))colnames(combined_spreadsheet) <- combined_headerscombined_spreadsheet <- combined_spreadsheet[order(combined_spreadsheet[,1]),] #sort by the first columnwrite.table(combined_spreadsheet,file="combined_spreadsheet.txt", sep = "\t", row.names = FALSE)```
+
+![](/Pics/spreadsheet.png)
+```#clean these two csv files in terminal and in matlab
 ```
 
 
