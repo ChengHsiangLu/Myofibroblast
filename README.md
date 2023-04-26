@@ -49,7 +49,7 @@ iPSCs can be used to study the underlying causes of diseases, test new drugs and
 
 ## Aim 
 
-In this project, we will be analyzing RNA-seq data from 19 samples, comprising of 10 samples with fibrotic complications and 9 non-fibrotic samples. Each sample has undergone two runs and 4 different treatments(untreated, TGF-b, TNF-a, and  TGF-b+TNF-a), resulting in a total of 151 samples(1 library failed). We used induced pluripotent stem cells (iPSC) to differentiate into myofibroblasts and stimulated the system with different signals to observe its development. The objective is to investigate the effect of four different treatments: untreated, TGF-b, TNF-a, and TGF-b+TNF-a on the development of the system. In the end, we will perform differential expression analysis to identify the genes that are differentially expressed in fibrotic and non-fibrotic samples under 4 treatments. 
+In this project, we will be analyzing RNA-seq data from 19 samples, comprising of 10 samples with fibrotic complications and 9 non-fibrotic samples. Each sample has undergone two runs and 4 different treatments(untreated, TGFb, TNFa, and  TGF-b+TNF-a), resulting in a total of 151 samples(1 library failed). We used induced pluripotent stem cells (iPSC) to differentiate into myofibroblasts and stimulated the system with different signals to observe its development. The objective is to investigate the effect of four different treatments: untreated, TGF-B, TNF-A, and TGF-B+TNF-A on the development of the system. In the end, we will perform differential expression analysis to identify the genes that are differentially expressed in fibrotic and non-fibrotic samples under 4 treatments. 
 
 <br> 
 
@@ -89,10 +89,7 @@ Create small-sized fasta-formatted files. To submit this job to the cluster on H
 
 ``` 
 
-cat tofastatable.txt | awk {print}' \
-| while read file library preffix ; do \
-qsub -cwd -o $PWD -e $PWD -l h_data=2048M,h_rt=8:00:00 \
-$HOME/scripts/generatefastaFromFastaqz $file $library $preffix  
+cat tofastatable.txt | awk {print}' | while read file library preffix ; do qsub -cwd -o $PWD -e $PWD -l h_data=2048M,h_rt=8:00:00 $HOME/scripts/generatefastaFromFastaqz $file $library $preffix  
 
 done 
 
@@ -125,10 +122,7 @@ Create a separate directory for each sample listed in "fastafiles.txt".
 
 ```
 
-cat fastafiles.txt \
-|while read line ; do \
-mkdir ${line/.fasta\.gz/GTFpass1/} ; \
-done
+cat fastafiles.txt |while read line ; do mkdir ${line/.fasta\.gz/GTFpass1/} ; done
 
 ``` 
 
@@ -144,20 +138,11 @@ echo '#!/bin/bash/' > sendmyof
 
 ``` 
 
-The command below runs the "generatesendscriptSingleGTFParam" script with several input parameters to map the RNA-seq data with STAR. The input parameters include the list of target directories containing the input data ("targetdirectories.GTF.txt"), the subdirectory name ("GTFpass1"), a parameter file containing settings for STAR alignment ("Parameters.txt"), a prefix for output files ("myof"), the path to the STAR index directory ("/home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/\GRCh38.primary.33.basicselected.STAR2.7.3a/"), the path to the input data directory ("/home/luc/iPSC/MYOFIBROBLAST/"), the amount of free memory to use ("mem_free=32G"), and the number of threads to use ("8"). In the end, it will generate a "processLaneSingleGTFParam" file and run the STAR package in each sample's folder.
+The command below runs the "generatesendscriptSingleGTFParam" script with several input parameters to map the RNA-seq data with STAR. The input parameters include the list of target directories containing the input data ("targetdirectories.GTF.txt"), the subdirectory name ("GTFpass1"), a parameter file containing settings for STAR alignment ("Parameters.txt"), a prefix for output files ("myof"), the path to the STAR index directory ("/home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/"), the path to the input data directory ("/home/luc/iPSC/MYOFIBROBLAST/"), the amount of free memory to use ("mem_free=32G"), and the number of threads to use ("8"). In the end, it will generate a "processLaneSingleGTFParam" file and run the STAR package in each sample's folder.
  
 ``` 
 
-./generatesendscriptSingleGTFParam \
-targetdirectories.GTF.txt \
-GTFpass1 \
-Parameters.txt \
-myof \
-/home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/\
-GRCh38.primary.33.basicselected.STAR2.7.3a/ \
-/home/luc/iPSC/MYOFIBROBLAST/ \
-mem_free=32G \
-8 >> sendmyof  
+./generatesendscriptSingleGTFParam targetdirectories.GTF.txt GTFpass1 Parameters.txt myof /home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/ /home/luc/iPSC/MYOFIBROBLAST/ mem_free=32G 8 >> sendmyof 
 
 ``` 
 
@@ -180,17 +165,13 @@ Change directory into one sample file which ends with "GTFpass1". Extract the fi
 
 ``` 
 
-grep "|" 008iP22TGFbM_S71GTFpass1/008iP22TGFbM_S71GTFpass1Log.final.out \
-| cut -f 1 -d "|" \
-| sed 's/^  *//g' \
-| awk 'NR>3 {print}' \
-> temp2.txt 
+grep "|" 008iP22TGFbM_S71GTFpass1/008iP22TGFbM_S71GTFpass1Log.final.out | cut -f 1 -d "|" | sed 's/^  *//g' | awk 'NR>3 {print}' > temp2.txt 
 
 ```
 
 The first column from the mapping statistics file.
 
-![](/Pics/mapping_statistics.jpg)
+![](/Pics/mapping_statistics.png)
 
 <br>
 
@@ -227,7 +208,7 @@ paste temp2.txt tempprev.txt > mappingstatsFirstpass.txt
 
 The mappingstatsFirstpass.txt would look like this:
 
-![](/Pics/mappingstatsFirstpass.jpg)
+![](/Pics/mappingstatsFirstpass.png)
 
 <br> 
 
@@ -244,10 +225,7 @@ cp *pass1/*PerGene* COUNTS/
 
 ``` 
 
-ls *tab \
-| while read line ; do \
-  mv $line ${line/GTFpass1ReadsPerGene.out/} ; \
-done 
+ls *tab|while read line ; do mv $line ${line/GTFpass1ReadsPerGene.out/} ; done 
 
 ```
 
@@ -270,13 +248,9 @@ Make a Geneid list from one of the count tables as "countsannot_GRCh38.primary.S
 
 ```
 
-ls 008iP22TGFbM_S71.tab \
-| head -1 \
-| while read line; do \
-    cut -f 1 $line \
-    | awk 'NR>4{print}' \
-    > countsannot_GRCh38.primary.Selected.Geneid.txt 
-done
+ls 008iP22TGFbM_S71.tab | head -1 | while read line; do  
+cut -f 1 $line | awk 'NR>4{print}' > countsannot_GRCh38.primary.Selected.Geneid.txt 
+done 
 
 ```
 
@@ -284,18 +258,14 @@ Create a file listing the names of all samples as "RBarretTNFATGFBsamples.txt".
 
 ```
 
-ls *.sense.tab \
-| sed 's/.sense.tab//g' \
-| tr -s " " "\n" \
-| sed 's/_1//g' \
-> RBarretTNFATGFBsamples.txt 
+ls *.sense.tab | sed 's/.sense.tab//g' | tr -s " " "\n" | sed 's/_1//g' > RBarretTNFATGFBsamples.txt 
 
 ```
 
 Make count tables for sense, anti-sense, nostrand, ambiguous, and nofeature reads.
 
 ```  
-
+****
 # combine all sense counts into RBarretTNFATGFB_sense.ALL.cnt 
 paste *.sense.tab > RBarretTNFATGFB_sense.ALL.cnt   
 
@@ -329,15 +299,8 @@ RBarretTNFATGFBCnt = textread('RBarretTNFATGFB_antisense.ALL.cnt','');
 RBarretsamplesTNFATGFB = textread('RBarretTNFATGFBsamples.txt','%s');
 RBarretsampleskeysTNFATGFB = textread('samplekeys_Sam.txt','%s');
 
-```
-
-Calculate the sum of the counts in RBarretTNFATGFBCnt, divides the result by 1000000, and rounds the result to the nearest integer. 
-
-```
-
-RBarretTNFATGFBmeta_seqdepth = round(
-  sum(RBarretTNFATGFBCnt) / 1000000
-);
+% calculate the sum of the counts in RBarretTNFATGFBCnt, divides the result by 1000000, and rounds the result to the nearest integer. 
+RBarretTNFATGFBmeta_seqdepth=round(sum(RBarretTNFATGFBCnt)/1000000);
 
 ```
 
@@ -345,11 +308,11 @@ You can find these annotation in the "mappability and R code" folder.
 
 ```
 
-Gencode_33_Selected_MappSS = textread('mappability and R code/gencode.v33.Selected.ReadsPerGene.out.MappSS.txt', '');
-Gencode_33_Selected_MappUS = textread('mappability and R code/gencode.v33.Selected.ReadsPerGene.out.MappUS.txt', '');
-Gencode_33_Selected_Geneid = textread('mappability and R code/gencode.v33.annotation.Selected.geneid.txt', '%s\n');
-Gencode_33_Selected_Biotype = textread('mappability and R code/gencode.v33.annotation.Selected.biotype.txt', '%s\n');
-Gencode_33_Selected_Genename = textread('mappability and R code/gencode.v33.annotation.Selected.genename.txt', '%s\n');
+Gencode_33_Selected_MappSS=textread('mappability and R code/gencode.v33.Selected.ReadsPerGene.out.MappSS.txt','');
+Gencode_33_Selected_MappUS=textread('mappability and R code/gencode.v33.Selected.ReadsPerGene.out.MappUS.txt','');
+Gencode_33_Selected_Geneid=textread('mappability and R code/gencode.v33.annotation.Selected.geneid.txt','%s\n');
+Gencode_33_Selected_Biotype=textread('mappability and R code/gencode.v33.annotation.Selected.biotype.txt','%s\n');
+Gencode_33_Selected_Genename=textread('mappability and R code/gencode.v33.annotation.Selected.genename.txt','%s\n');
 
 ```
 
@@ -365,27 +328,16 @@ Finally, iterates over each sample in the TPM data matrix. For each sample, the 
 ```
 
 RBarretTNFATGFBTPM = RBarretTNFATGFBCnt;
-
 for i=1:size(RBarretTNFATGFBCnt,1)
-% divid the gene count matrix RBarretTNFATGFBCnt
-% by Gencode_33_Selected_MappSS matrix,
-% which is the sum of the transcript length of each gene
+% divid the gene count matrix RBarretTNFATGFBCnt by Gencode_33_Selected_MappSS matrix, which is the sum of the transcript length of each gene
 RBarretTNFATGFBTPM(i,:) = RBarretTNFATGFBCnt(i,:)/Gencode_33_Selected_MappSS(i)*1000;
 end
-
 % set any NaN or Inf values resulting from the normalization process to 0
 RBarretTNFATGFBTPM(isnan(RBarretTNFATGFBTPM)) = 0;
 RBarretTNFATGFBTPM(isinf(RBarretTNFATGFBTPM)) = 0;
-
 for i=1:size(RBarretTNFATGFBTPM,2)
-% scale the TPM values so that 
-% the sum of expression values across each sample of the matrix
-% is equal to 1,000,000. 
-% This ensures that the expression values are 
-% comparable across different samples and allows meaningful comparisons 
-% of gene expression levels between different samples.
-RBarretTNFATGFBTPM(:,i) = RBarretTNFATGFBTPM(:,i) / \
-                            sum(RBarretTNFATGFBTPM(:,i)) * 1000000;
+% scale the TPM values so that the sum of expression values across each sample of the matrix is equal to 1,000,000. This ensures that the expression values are comparable across different samples and allows meaningful comparisons of gene expression levels between different samples.
+RBarretTNFATGFBTPM(:,i) = RBarretTNFATGFBTPM(:,i)/sum(RBarretTNFATGFBTPM(:,i))*1000000;
 end
 
 ```
@@ -417,12 +369,11 @@ plot(thistree, 'ORIENTATION', 'top')
 
 ```
 
-![](/Pics/first_dendrogram.jpg)
+![](/Pics/first_dendrogram.png)
 
 <br>
 
 #### All biotypes counts percents
-
 
 This part of codes is performing all biotypes counts percents across multiple samples. 
 
@@ -431,34 +382,20 @@ This part of codes is performing all biotypes counts percents across multiple sa
 % use the unique function and stored the allbiotypes variable.
 allbiotypes = unique(Gencode_33_Selected_Biotype);
 
-% create A cell array allbiotypeslength 
-% to store the lengths of each biotype name.
+% create A cell array allbiotypeslength to store the lengths of each biotype name.
 allbiotypeslength = cell(length(allbiotypes),1);
 
-% two new matrices, allbiotypescounts and allbiotypescountspercents, 
-% are initialized with zeros. 
-% These matrices have dimensions 
-% (number of unique biotypes) x (number of samples in the TPM data). 
-% They will be used to store the number of reads (counts) 
-% and the percentage of total reads (%TPM) 
-% for each biotype in each sample.
+% two new matrices, allbiotypescounts and allbiotypescountspercents, are initialized with zeros. These matrices have dimensions (number of unique biotypes) x (number of samples in the TPM data). They will be used to store the number of reads (counts) and the percentage of total reads (%TPM) for each biotype in each sample.
 allbiotypescounts = zeros(length(allbiotypes),size(RBarretTNFATGFBCnt,2));
 allbiotypescountspercents = zeros(length(allbiotypes),size(RBarretTNFATGFBCnt,2));
 
 for i=1:length(allbiotypes)
-% find all the indices of Gencode_33_Selected_Biotype that 
-% match the current biotype. 
-% return a vector of indices where the biotype occurs in 
-% Gencode_33_Selected_Biotype.
+%  finds all the indices of Gencode_33_Selected_Biotype that match the current biotype. Then, returned a vector of **indices** where the biotype occurs in Gencode_33_Selected_Biotype.
 temp = strmatch(allbiotypes{i}, Gencode_33_Selected_Biotype);
-% Store the length of the temp vector represents the number of genes 
-% with the current biotype in the Gencode_33_Selected_Biotype.
+% Stored the length of the temp vector represents the number of genes with the current biotype in the Gencode_33_Selected_Biotype.
 allbiotypeslength{i} = length(temp);
 if length(temp)>1
-% Sum the expression values 
-% for all genes with the current biotype across all samples. 
-% The resulting sums are stored 
-% in the corresponding row of the allbiotypescounts matrix.
+% Sum the expression values for all genes with the current biotype across all samples. The resulting sums are stored in the corresponding row of the allbiotypescounts matrix.
 allbiotypescounts(i,:) = sum(RBarretTNFATGFBCnt(strmatch(allbiotypes{i}, Gencode_33_Selected_Biotype),:)); 
 allbiotypescountspercents(i,:) = allbiotypescounts(i,:)./sum(RBarretTNFATGFBCnt)*100; 
 end
@@ -471,66 +408,49 @@ writetable(cell2table(allbiotypes),'allbiotypes.txt','WriteVariableNames',0)
 
 Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescountspercents.txt", and calculate the minimum, maximum, and average values for each biotype. You can access my completed spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx). Notably, protein_coding genes exhibit an average of 98.65% among the various biotypes, consistent with my expectations.
 
-![](/Pics/spreadsheet_allbiotypescountspercents.jpg)
+![](/Pics/spreadsheet_allbiotypescountspercents.png)
 
 <br>
 
 #### Protein coding genes
-
 
 The "allbiotypes.txt" file contains multiple biotypes. For the next step, I will only retain the "protein_coding" biotype.
 
 ```
 
 allbiotypes=unique(Gencode_33_Selected_Biotype);
-% find the 15th unique value,
-% which is protein_coding, of Gencode_33_Selected_Biotype
-% in the array proteincodingindx.
+% finds the 15th unique value, which is protein_coding, of Gencode_33_Selected_Biotype in the array proteincodingindx.
 proteincodingindx = strmatch(allbiotypes{15}, Gencode_33_Selected_Biotype);
 biotypeindx = proteincodingindx;
 
-% creates an array additionalgenes contains 
-% the indices of genes that have certain prefixes 
-% such as 'MT-', 'H1', 'H2', 'H3', 'H4', 'RPL', or 'RPS' in their names.
-additionalgenes = [strmatch('MT-',Gencode_33_Selected_Genename) ; \                   strmatch('H1',Gencode_33_Selected_Genename); \                   strmatch('H2',Gencode_33_Selected_Genename); \                   strmatch('H3',Gencode_33_Selected_Genename); \                   strmatch('H4',Gencode_33_Selected_Genename) ; \                   strmatch('RPL',Gencode_33_Selected_Genename) ; \                   strmatch('RPS',Gencode_33_Selected_Genename)];
+% creates an array additionalgenes contains the indices of genes that have certain prefixes such as 'MT-', 'H1', 'H2', 'H3', 'H4', 'RPL', or 'RPS' in their names.
+additionalgenes = [strmatch('MT-',Gencode_33_Selected_Genename) ; strmatch('H1',Gencode_33_Selected_Genename); strmatch('H2',Gencode_33_Selected_Genename); strmatch('H3',Gencode_33_Selected_Genename); strmatch('H4',Gencode_33_Selected_Genename) ; strmatch('RPL',Gencode_33_Selected_Genename) ; strmatch('RPS',Gencode_33_Selected_Genename)];
 
-
-
-% creates an array nonadditionalgenes with the same length as
-% the Gencode_33_Selected_Genename array.
+% creates an array nonadditionalgenes with the same length as the Gencode_33_Selected_Genename array.	
 nonadditionalgenes = 1:length(Gencode_33_Selected_Genename);
-
-% remove the indices of genes in additionalgenes from the
-% nonadditionalgenes array.
+% remove the indices of genes in additionalgenes from the nonadditionalgenes array.
 nonadditionalgenes(additionalgenes) = [];
 
-% mappableindx contains the indices of elements in the 
-% Gencode_33_Selected_MappSS array that are greater than 50.
+% mappableindx contains the indices of elements in the Gencode_33_Selected_MappSS array that are greater than 50.
 mappableindx = find(Gencode_33_Selected_MappSS>50);
 
 ```
 
 ```
 
-% a new variable finalIndexGeneric 
-% which is the intersection of three other variables: 
-% biotypeindx, nonadditionalgenes, and mappableindx.
+% a new variable finalIndexGeneric which is the intersection of three other variables: biotypeindx, nonadditionalgenes, and mappableindx.
 finalIndexGeneric = intersect(biotypeindx,intersect(nonadditionalgenes,mappableindx));			
-% find the indices of rows in RBarretTNFATGFBCnt 
-% that have a sum greater than 150. 
+% find the indices of rows in RBarretTNFATGFBCnt that have a sum greater than 150. 
 countindx = find(sum(RBarretTNFATGFBCnt')'>150);
 
-% update finalIndexGeneric to be the intersection of 
-% finalIndexGeneric and countindx.
+% update finalIndexGeneric to be the intersection of finalIndexGeneric and countindx.
 finalIndexGeneric=intersect(finalIndexGeneric,countindx);
 
 ```						
 
 ```
 
-% create a new variable RBarretTNFATGFBCnt_GMask 
-% which is a subset of RBarretTNFATGFBCnt 
-% corresponding to the rows indexed by finalIndexGeneric.
+% create a new variable RBarretTNFATGFBCnt_GMask which is a subset of RBarretTNFATGFBCnt corresponding to the rows indexed by finalIndexGeneric.
 RBarretTNFATGFBCnt_GMask = RBarretTNFATGFBCnt(finalIndexGeneric,:);
 
 Gencode_33_Selected_Geneid_GMask = Gencode_33_Selected_Geneid(finalIndexGeneric);
@@ -542,47 +462,32 @@ Gencode_33_Selected_MappUS_GMask = Gencode_33_Selected_MappUS(finalIndexGeneric)
 
 ```
 
-% normalize the expression data like we do previously.
+% normalize the expression data like we do previously
 RBarretTNFATGFBExpression_GMask = RBarretTNFATGFBCnt_GMask;
 for i=1:size(RBarretTNFATGFBExpression_GMask,2)
-RBarretTNFATGFBExpression_GMask(:,i) = ...
-    RBarretTNFATGFBCnt_GMask(:,i) / ...
-    sum(RBarretTNFATGFBCnt_GMask(:,i)) * 1000000;
+RBarretTNFATGFBExpression_GMask(:,i) = RBarretTNFATGFBCnt_GMask(:,i)/sum(RBarretTNFATGFBCnt_GMask(:,i))*1000000;
 end
 for i=1:size(RBarretTNFATGFBExpression_GMask)
-RBarretTNFATGFBExpression_GMask(i,:) = ...
-	RBarretTNFATGFBExpression_GMask(i,:)/...
-	Gencode_33_Selected_MappSS_GMask(i)*1000;
+RBarretTNFATGFBExpression_GMask(i,:) = RBarretTNFATGFBExpression_GMask(i,:)/Gencode_33_Selected_MappSS_GMask(i)*1000;
 end
-
 RBarretTNFATGFBExpression_GMask(isnan(RBarretTNFATGFBExpression_GMask)) = 0;
 RBarretTNFATGFBExpression_GMask(isinf(RBarretTNFATGFBExpression_GMask)) = 0;
 
-% RBarretTNFATGFBCPM_GMask contains 
-% the expression data normalized only by CPM, 
-% using the same normalization method as the code above.
+% RBarretTNFATGFBCPM_GMask contains the expression data normalized only by CPM, using the same normalization method as the code above.
 RBarretTNFATGFBCPM_GMask = zeros(size(RBarretTNFATGFBCnt_GMask));
 for i=1:size(RBarretTNFATGFBCnt_GMask,2)
-RBarretTNFATGFBCPM_GMask(:,i) = ...
-	RBarretTNFATGFBCnt_GMask(:,i)/...
-	sum(RBarretTNFATGFBCnt_GMask(:,i))*1000000;
+RBarretTNFATGFBCPM_GMask(:,i) = RBarretTNFATGFBCnt_GMask(:,i)/sum(RBarretTNFATGFBCnt_GMask(:,i))*1000000;
 end
 
 % RBarretTNFATGFBTPM_GMask contains the expression data normalized only by TPM.
 RBarretTNFATGFBTPM_GMask = RBarretTNFATGFBCnt_GMask;
 for i=1:size(RBarretTNFATGFBCnt_GMask,1)
-RBarretTNFATGFBTPM_GMask(i,:) = ...
-	RBarretTNFATGFBCnt_GMask(i,:)/...
-	Gencode_33_Selected_MappSS_GMask(i)*1000;
+RBarretTNFATGFBTPM_GMask(i,:) = RBarretTNFATGFBCnt_GMask(i,:)/Gencode_33_Selected_MappSS_GMask(i)*1000;
 end
-
 RBarretTNFATGFBTPM_GMask(isnan(RBarretTNFATGFBTPM_GMask)) = 0;
 RBarretTNFATGFBTPM_GMask(isinf(RBarretTNFATGFBTPM_GMask)) = 0;
-
 for i=1:size(RBarretTNFATGFBTPM_GMask,2)
-RBarretTNFATGFBTPM_GMask(:,i) = ...
-	RBarretTNFATGFBTPM_GMask(:,i)/...
-	sum(RBarretTNFATGFBTPM_GMask(:,i))*1000000;
+RBarretTNFATGFBTPM_GMask(:,i) = RBarretTNFATGFBTPM_GMask(:,i)/sum(RBarretTNFATGFBTPM_GMask(:,i))*1000000;
 end
 
 ```
@@ -590,7 +495,6 @@ end
 <br>
 
 #### Dendrogram with only protein coding genes
-
 
 
 Perform hierarchical clustering on a subset of the gene expression data stored in the variable RBarretTNFATGFBTPM_GMask with only protein coding genes.
@@ -611,7 +515,7 @@ plot(thistree,'ORIENTATION','top')
 
 Basically, the plot is clustered by their treatments.
 
-![](/Pics/Second_dendrogram.jpg)
+![](/Pics/Second_dendrogram.png)
 
 <br>
 
@@ -621,13 +525,7 @@ Calculates the top 100 expressed genes in each sample based on their transcript 
 
 ```
 
-% iterates over 151 samples, 
-% it first sorts the TPM values of all genes 
-% in descending order and stores the indices of the sorted genes in y. 
-% The top 100 expressed genes in the sample are obtained 
-% by selecting the first 100 indices in y, 
-% and these indices are appended to a running list of all top 100 indices yall.
-
+% iterates over 151 samples, it first sorts the TPM values of all genes in descending order and stores the indices of the sorted genes in y. The top 100 expressed genes in the sample are obtained by selecting the first 100 indices in y, and these indices are appended to a running list of all top 100 indices yall.
 yall=[];
 for i=1:151
 [x y]=sort(RBarretTNFATGFBTPM_GMask(:,i),'descend');
@@ -637,21 +535,15 @@ end
 
 ```
 
-After calculating the sum of the percent of the top 100 genes, it is 58.25%.
-
 In the end, we store the Gencode\_33\_Selected\_Geneid\_GMask.txt, Gencode\_33\_Selected\_Genename\_GMask.txt, Gencode\_33\_Selected\_MappSS\_GMask.txt, RBarretTNFATGFBTPM\_GMask.txt, and RBarretTNFATGFBCnt\_GMask.txt for ours further analysis in R.
 
 ```
 
-writetable(cell2table(Gencode_33_Selected_Geneid_GMask), ...
-    'Gencode_33_Selected_Geneid_GMask.txt', 'WriteVariableNames', 0)
-writetable(cell2table(Gencode_33_Selected_Genename_GMask),...
-	'Gencode_33_Selected_Genename_GMask.txt','WriteVariableNames',0)
-dlmwrite('Gencode_33_Selected_MappSS_GMask.txt',...
-	Gencode_33_Selected_MappSS_GMask,'delimiter','\t')
-dlmwrite('RBarretTNFATGFBTPM_GMask.txt',...
-	RBarretTNFATGFBTPM_GMask,'delimiter','\t')
-dlmwrite('RBarretTNFATGFBCnt_GMask.txt',... 	RBarretTNFATGFBCnt_GMask,'delimiter','\t')
+writetable(cell2table(Gencode_33_Selected_Geneid_GMask),'Gencode_33_Selected_Geneid_GMask.txt','WriteVariableNames',0)
+writetable(cell2table(Gencode_33_Selected_Genename_GMask),'Gencode_33_Selected_Genename_GMask.txt','WriteVariableNames',0)
+dlmwrite('Gencode_33_Selected_MappSS_GMask.txt', Gencode_33_Selected_MappSS_GMask,'delimiter','\t')
+dlmwrite('RBarretTNFATGFBTPM_GMask.txt', RBarretTNFATGFBTPM_GMask,'delimiter','\t')
+dlmwrite('RBarretTNFATGFBCnt_GMask.txt', RBarretTNFATGFBCnt_GMask,'delimiter','\t')
 
 ```
 
@@ -661,13 +553,11 @@ dlmwrite('RBarretTNFATGFBCnt_GMask.txt',... 	RBarretTNFATGFBCnt_GMask,'delimiter
 
 #### Install packages
 
-
 First, install packages BiocManager, BiocLite, IHW, DESeq2, and ggplot2. Then, read in RBarretTNFATGFBCnt\_GMask.txt, RBarretTNFATGFBsamples.txt, samplekeys\_Sam.txt, and Gencode\_33\_Selected\_Genename\_GMask.txt.
 
 ```
 
-setwd("/Users/LuC/Desktop/Cedars-Sinai/PROJECTS/IBD_RNASeq/RBARRETTNFATGFB/")
-#setwd("/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/IBD_RNASeq/RBARRETTNFATGFB/")if (!requireNamespace("BiocManager", quietly = TRUE))  install.packages("BiocManager")#BiocManager::install("BiocLite")#BiocManager::install("IHW")#BiocManager::install("DESeq2")#install.packages("ggplot2")library(DESeq2)library(IHW)library(ggplot2)library(ggrepel)RBarretTNFATGFBCntGMask = as.matrix(read.table("RBarretTNFATGFBCnt_GMask.txt"))sampleNameTNFATGFB = as.matrix(read.table("RBarretTNFATGFBsamples.txt"))sampleKeyTNFATGFB = as.matrix(read.table("samplekeys_Sam.txt"))genenames = as.matrix(read.table("Gencode_33_Selected_Genename_GMask.txt"))
+setwd("/Users/LuC/Desktop/Cedars-Sinai/PROJECTS/IBD_RNASeq/RBARRETTNFATGFB/")#setwd("/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/IBD_RNASeq/RBARRETTNFATGFB/")if (!requireNamespace("BiocManager", quietly = TRUE))  install.packages("BiocManager")#BiocManager::install("BiocLite")#BiocManager::install("IHW")#BiocManager::install("DESeq2")#install.packages("ggplot2")library(DESeq2)library(IHW)library(ggplot2)library(ggrepel)RBarretTNFATGFBCntGMask = as.matrix(read.table("RBarretTNFATGFBCnt_GMask.txt"))sampleNameTNFATGFB = as.matrix(read.table("RBarretTNFATGFBsamples.txt"))sampleKeyTNFATGFB = as.matrix(read.table("samplekeys_Sam.txt"))genenames = as.matrix(read.table("Gencode_33_Selected_Genename_GMask.txt"))
 ```
 
 <br>
@@ -697,13 +587,7 @@ done
 The sampleTableTNFATGFB contains Treatment, Line, Pheno, Sex, Pass, Factor, and Batch.
 
 ```
-sampleTableTNFATGFB = read.table("samplekeys_Sam.tab")rownames(sampleTableTNFATGFB)<-sampleKeyTNFATGFB
-colnames(sampleTableTNFATGFB)<- c("Treatment","Line","Pheno","Sex","Pass")
-sampleTableTNFATGFB$Factor <- paste(sampleTableTNFATGFB$Treatment,sampleTableTNFATGFB$Pheno,sep="_")
-#concatenating the "Line" and "Pass" columns 
-#with an underscore separatorsampleTableTNFATGFB$Batch <- paste(sampleTableTNFATGFB$Line,sampleTableTNFATGFB$Pass,sep="_")
-colnames(RBarretTNFATGFBCntGMask) <- sampleKeyTNFATGFB
-write.table(sampleTableTNFATGFB,file="sampleTableTNFATGFB.txt", sep = "\t", col.names = FALSE)
+sampleTableTNFATGFB = read.table("samplekeys_Sam.tab")rownames(sampleTableTNFATGFB)<-sampleKeyTNFATGFBcolnames(sampleTableTNFATGFB)<- c("Treatment","Line","Pheno","Sex","Pass")sampleTableTNFATGFB$Factor <- paste(sampleTableTNFATGFB$Treatment,sampleTableTNFATGFB$Pheno,sep="_")#concatenating the "Line" and "Pass" columns with an underscore separatorsampleTableTNFATGFB$Batch <- paste(sampleTableTNFATGFB$Line,sampleTableTNFATGFB$Pass,sep="_")colnames(RBarretTNFATGFBCntGMask) <- sampleKeyTNFATGFBwrite.table(sampleTableTNFATGFB,file="sampleTableTNFATGFB.txt", sep = "\t", col.names = FALSE)
 ```
 
 ![](/Pics/sampleTableTNFATGFB.png)
@@ -719,19 +603,7 @@ Next, the DESeq function is used to estimate size factors and dispersion values 
 Finally, the varianceStabilizingTransformation function is used to perform variance stabilizing transformation on the DESeqDataSet objects. This transformation is important for reducing the effect of noise and heteroscedasticity in the data, making it more suitable for downstream analyses such as differential gene expression analysis.
 
 ```
-RBarretTNFATGFBCntGMaskBatch <- DESeqDataSetFromMatrix(
-  RBarretTNFATGFBCntGMask, 
-  colData= sampleTableTNFATGFB,
-  design= ~Batch
-)RBarretTNFATGFBCntGMaskBatch <- DESeq(RBarretTNFATGFBCntGMaskBatch)RBarretTNFATGFBCntGMaskFactor <- DESeqDataSetFromMatrix(
-	RBarretTNFATGFBCntGMask, 
-	colData= sampleTableTNFATGFB,
-	design= ~Factor
-)RBarretTNFATGFBCntGMaskFactor <- DESeq(RBarretTNFATGFBCntGMaskFactor)RBarretTNFATGFBCntGMaskBatch_vsd <- varianceStabilizingTransformation(
-	RBarretTNFATGFBCntGMaskBatch,blind=FALSE
-)RBarretTNFATGFBCntGMaskFactor_vsd <- varianceStabilizingTransformation(
-	RBarretTNFATGFBCntGMaskFactor,blind=FALSE
-)
+RBarretTNFATGFBCntGMaskBatch <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= sampleTableTNFATGFB,design= ~Batch)RBarretTNFATGFBCntGMaskBatch <- DESeq(RBarretTNFATGFBCntGMaskBatch)RBarretTNFATGFBCntGMaskFactor <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= sampleTableTNFATGFB,design= ~Factor)RBarretTNFATGFBCntGMaskFactor <- DESeq(RBarretTNFATGFBCntGMaskFactor)RBarretTNFATGFBCntGMaskBatch_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskBatch,blind=FALSE)RBarretTNFATGFBCntGMaskFactor_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskFactor,blind=FALSE)
 ```
 
 <br>
@@ -739,31 +611,13 @@ Finally, the varianceStabilizingTransformation function is used to perform varia
 #### PCA
 
 ```
-#perform principal component analysis (PCA) 
-#on the variance-stabilized counts data
-pcabatch <- prcomp(t(assay(RBarretTNFATGFBCntGMaskBatch_vsd)))
-#give the percentage of variance explained by each principal component
-percentVarbatch <- round(100*pcabatch$sdev^2/sum(pcabatch$sdev^2))
-#pcabatch$rotation is a matrix 
-#containing the loadings of the principal components.
-aloadbatch <- abs(pcabatch$rotation)
+#perform principal component analysis (PCA) on the variance-stabilized counts data pcabatch <- prcomp(t(assay(RBarretTNFATGFBCntGMaskBatch_vsd)))
+#give the percentage of variance explained by each principal componentpercentVarbatch <- round(100*pcabatch$sdev^2/sum(pcabatch$sdev^2))
+#pcabatch$rotation is a matrix containing the loadings of the principal components.aloadbatch <- abs(pcabatch$rotation)
 
-#normalize the loadings in aloadbatch 
-#so that each column (i.e., PC) sums to 1. 
-aloadrelativebatch <- sweep(aloadbatch, 2, colSums(aloadbatch), "/")
-#pcabatch$x is a matrix containing each sample's coordinate
-#on each principal component
-pcabatchALL <- pcabatch$xpcabatchR<- cbind(pcabatchALL,sampleTableTNFATGFB)
-#center the PC1 scores in pcabatchR to have a mean of 0,
-#so that the PC1 variable can be used 
-#as a covariate in the subsequent differential expression analysis.
-pcabatchR$PC1 <- scale(pcabatchR$PC1, center = TRUE)RBarretTNFATGFBCntGMaskPC1 <- DESeqDataSetFromMatrix(
-	RBarretTNFATGFBCntGMask, 
-	colData= pcabatchR,
-	design= ~PC1
-)RBarretTNFATGFBCntGMaskPC1 <- DESeq(RBarretTNFATGFBCntGMaskPC1)RBarretTNFATGFBCntGMaskPC1_vsd <- varianceStabilizingTransformation(
-RBarretTNFATGFBCntGMaskPC1,blind=FALSE
-)
+#normalize the loadings in aloadbatch so that each column (i.e., PC) sums to 1. aloadrelativebatch <- sweep(aloadbatch, 2, colSums(aloadbatch), "/")
+#pcabatch$x is a matrix containing each sample's coordinate on each principal componentpcabatchALL <- pcabatch$xpcabatchR<- cbind(pcabatchALL,sampleTableTNFATGFB)
+#center the PC1 scores in pcabatchR to have a mean of 0. This is done so that the PC1 variable can be used as a covariate in the subsequent differential expression analysis.pcabatchR$PC1 <- scale(pcabatchR$PC1, center = TRUE)RBarretTNFATGFBCntGMaskPC1 <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= pcabatchR,design= ~PC1)RBarretTNFATGFBCntGMaskPC1 <- DESeq(RBarretTNFATGFBCntGMaskPC1)RBarretTNFATGFBCntGMaskPC1_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskPC1,blind=FALSE)
 ```
 
 <br>
@@ -771,51 +625,18 @@ RBarretTNFATGFBCntGMaskPC1,blind=FALSE
 #### PCA plots
 
 ```
-ggplot(pcabatchR, aes(PC1, PC2, color= Pheno)) + 
-  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3) + 
-  geom_point(aes(size= Pheno),color="black",alpha=0.2) +
-  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) + 
-  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) +
-  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, \
-  point.padding = 0.5,segment.color = 'grey50') + 
-  theme_bw()```
+ggplot(pcabatchR, aes(PC1, PC2, color= Pheno)) +  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Pheno),color="black",alpha=0.2) +  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) +  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = 'grey50')+ theme_bw()ggplot(pcabatchR, aes(PC1, PC2, color= Sex)) +  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Treatment),color="black",alpha=0.2) +  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) + theme_bw()ggplot(pcabatchR, aes(PC2, PC9, color= Pheno)) +  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Treatment),color="black",alpha=0.2) +  xlab(paste0("PC2: ",percentVarbatch[2],"% variance")) +  ylab(paste0("PC9: ",percentVarbatch[9],"% variance")) +  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = 'grey50')+ theme_bw()
+```
 
 The plot shows the relationship between **PC1 and PC2** colored by **Pheno** variable, with the point size indicating the **Treatment** variable.
 
 Four distinct groups were formed based on their treatment: the CC group (untreated) is located in the right corner, the TG group (treated with TGF-b) is located at the bottom, the TN group (treated with TNF-a) is located in the right corner, and the TT group (treated with both TGF-b and TNF-a) is located at the top. These groups were differentiated based on PC1, which accounted for 19% of the variance.
-
-![](/Pics/PCA_Pheno_Treatment.jpeg)<br>
+![](/Pics/PCA_Pheno_Treatment.png)<br>
 #### A series of bar plots (one for each principal component)
-
 
 Each bar plot represents the loadings of all samples on a given principal component. 
 ```
-#the resulting vector coul will contain 12 colors
-#from the "Set3" palette.
-library(RColorBrewer)coul <- brewer.pal(12, "Set3")#generates colors for a plot based on the batch variablecolors=pcabatchR$Batchallbatches<-unique(pcabatchR$Batch)for (i in 1:38){  colors[pcabatchR$Batch==allbatches[i]]<-coul[i%%12+1]}thinlines=c(seq(4,72,8),75,seq(83,151,8))thicklines=c(seq(8,72,8),79,seq(87,151,8))#first half of the barplot would be
-#the non-fibrotic group and the second part would be the fibrotic group.#The order would be CC, TG, TN, TT.
-samplesorder = c(
-  4, 1, 3, 2, 8, 5, 7, 6,
-  28, 25, 27, 26, 32, 29, 31, 30,
-  36, 33, 35, 34, 40, 37, 39, 38,
-  52, 49, 51, 50, 55, 53, 55, 54,
-  68, 65, 67, 66, 72, 69, 71, 70,
-  76, 73, 75, 74, 80, 77, 79, 78,
-  84, 81, 83, 82, 88, 85, 87, 86,
-  116, 113, 115, 114, 120, 117, 119, 118,
-  139, 136, 138, 137, 143, 140, 142, 141,
-  12, 9, 11, 10, 16, 13, 15, 14,
-  20, 17, 19, 18, 24, 21, 23, 22,
-  44, 41, 43, 42, 48, 45, 47, 46,
-  60, 57, 59, 58, 64, 61, 63, 62,
-  92, 89, 91, 90, 96, 93, 95, 94,
-  100, 97, 99, 98, 104, 101, 103, 102,
-  108, 105, 107, 106, 112, 109, 111, 110,
-  124, 121, 123, 122, 128, 125, 127, 126,
-  132, 129, 131, 130, 135, 133, 134,
-  147, 144, 146, 145, 151, 148, 150, 149
-)#create 38 barplots and saving each of them as a PNG file
-for (i in 1:38) {  filename = paste("PC_",i,".png", sep = "")  png(filename)  barplot(pcabatchALL[samplesorder,i],col=colors[samplesorder],las=2,xaxt='n',space=0)  for (i in 1:length(thinlines)) {    abline(v = thinlines[i], col = "black",lty = 3)  }  for (i in 1:length(thicklines)) {    abline(v = thicklines[i], col = "black",lty = 1)  }  abline(v = 72, col = "red",lty = 1)  dev.off()}write.csv(aloadrelativebatch,file="aloadrelativeMask_batchmodel_filtered.csv")write.csv(pcabatch$x,file="pca_batchmodel_x.csv")
+#the resulting vector coul will contain 12 colors from the "Set3" palette.library(RColorBrewer)coul <- brewer.pal(12, "Set3")#generates colors for a plot based on the batch variablecolors=pcabatchR$Batchallbatches<-unique(pcabatchR$Batch)for (i in 1:38){  colors[pcabatchR$Batch==allbatches[i]]<-coul[i%%12+1]}thinlines=c(seq(4,72,8),75,seq(83,151,8))thicklines=c(seq(8,72,8),79,seq(87,151,8))#first half of the barplot would be the non-fibrotic group and the second part would be the fibrotic group#the order would be CC, TG, TN, TTsamplesorder=c(4,1,3,2,8,5,7,6,28,25,27,26,32,29,31,30,36,33,35,34,40,37,39,38,52,49,51,50,55,53,55,54,68,65,67,66,72,69,71,70,76,73,75,74,80,77,79,78,84,81,83,82,88,85,87,86,116,113,115,114,120,117,119,118,139,136,138,137,143,140,142,141,12,9,11,10,16,13,15,14,20,17,19,18,24,21,23,22,44,41,43,42,48,45,47,46,60,57,59,58,64,61,63,62,92,89,91,90,96,93,95,94,100,97,99,98,104,101,103,102,108,105,107,106,112,109,111,110,124,121,123,122,128,125,127,126,132,129,131,130,135,133,134,147,144,146,145,151,148,150,149)#create 38 barplots and saving each of them as a PNG filefor (i in 1:38) {  filename = paste("PC_",i,".png", sep = "")  png(filename)  barplot(pcabatchALL[samplesorder,i],col=colors[samplesorder],las=2,xaxt='n',space=0)  for (i in 1:length(thinlines)) {    abline(v = thinlines[i], col = "black",lty = 3)  }  for (i in 1:length(thicklines)) {    abline(v = thicklines[i], col = "black",lty = 1)  }  abline(v = 72, col = "red",lty = 1)  dev.off()}write.csv(aloadrelativebatch,file="aloadrelativeMask_batchmodel_filtered.csv")write.csv(pcabatch$x,file="pca_batchmodel_x.csv")
 ```
 
 A red line is drawn at position 72 in order to separate the non-fibrotic group and the fibrotic group. Within each patient, the treatment order would be CC, TG, TN, TT. The color of each bar represents the batch of the sample, with a unique color assigned to each batch. The vertical lines on the plot indicate the position of specific loadings, with thin and thick lines indicating different positions. 
@@ -828,22 +649,13 @@ For example, this is PC_1.png. From this plot, you can see that the highest sxpr
 
 #### PCA rank matrix
 
-
 Take csv files and converts it to the txt files with the second column onwards. It does this by first removing the first row using awk, replacing multiple commas with tabs using tr, and removing the first column using cut.
 
 ```
 
 #In terminal
-
-cat aloadrelativeMask_batchmodel_filtered.csv \
-| awk 'NR>1{print}' \
-| tr -s "," "\t" \
-| cut -f 2- > aloadrelativeMask_batchmodel_filtered.clean.txt
-
-cat pca_batchmodel_x.csv \
-  | awk 'NR>1{print}' \
-  | tr -s "," "\t" \
-  | cut -f 2- > pca_batchmodel_x.clean.txt
+cat aloadrelativeMask_batchmodel_filtered.csv | awk 'NR>1{print}' | tr -s "," "\t" | cut -f 2- > aloadrelativeMask_batchmodel_filtered.clean.txt
+cat pca_batchmodel_x.csv | awk 'NR>1{print}' | tr -s "," "\t" | cut -f 2- > pca_batchmodel_x.clean.txt
 
 ```
 
@@ -852,7 +664,6 @@ Read in the preprocessed data files created in the previous steps and store them
 ```
 
 #In Matlab
-
 pcabatch_samples = textread('pca_batchmodel_x.clean.txt','');
 pca_loadings = textread('aloadrelativeMask_batchmodel_filtered.clean.txt','');
 
@@ -883,8 +694,7 @@ pcarankmatrix(:,2)=z;
 [x y z]=intersect(1:length(y3),y3);
 pcarankmatrix(:,3)=z;
 
-%contains the rank of each feature in the original order 
-%for the first three principal components
+%contains the rank of each feature in the original order for the first three principal components
 
 dlmwrite('pcarankmatrix.txt', pcarankmatrix,'delimiter','\t')
 
@@ -909,19 +719,7 @@ The second sheet (allbiotypes_percents) includes the names and percentages of al
 #In terminal
 paste allbiotypes allbiotypescountspercents > combine_allbiotypes_percents.txt
 
-#In R
-#allbiotypes_percents
-sheet2_1 <- list("Biotypes")
-sheet2_2 <- sampleKeyTNFATGFB
-combined_sheet2 <- c(sheet2_1, sheet2_2)
-combined_spreadsheet2 <- as.matrix(
-	read.table("combine_allbiotypes_percents.txt")
-)colnames(combined_spreadsheet2) <- combined_sheet2
-write.table(combined_spreadsheet2,
-            file="combined_spreadsheet2.txt",
-            sep = "\t",
-            row.names = FALSE)
-
+#In R#allbiotypes_percentssheet2_1 <- list("Biotypes")sheet2_2 <- sampleKeyTNFATGFBcombined_sheet2 <- c(sheet2_1, sheet2_2)combined_spreadsheet2 <- as.matrix(read.table("combine_allbiotypes_percents.txt"))colnames(combined_spreadsheet2) <- combined_sheet2write.table(combined_spreadsheet2,file="combined_spreadsheet2.txt", sep = "\t", row.names = FALSE)
 #add their respective minimum, maximum, and average values on Excel
 
 ```
@@ -935,30 +733,11 @@ The third sheet is the main sheet that includes Genename, Geneid, Mapp, PC1, PC2
 
 #In terminal
 
-paste \
-  Gencode_33_Selected_Genename_GMask.txt \
-  Gencode_33_Selected_Genename_GMask.txt \
-  Gencode_33_Selected_Geneid_GMask.txt \
-  Gencode_33_Selected_MappSS_GMask.txt \
-  pcarankmatrix.txt \
-  > combine_test.txt
+paste Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_Geneid_GMask.txt Gencode_33_Selected_MappSS_GMask.txt pcarankmatrix.txt  > combine_test.txt
 #In R
 
 #spreadsheet
-sheet3_1 <- list("Genename","Genename","Geneid","Mapp","PC1","PC2","PC3")
-sheet3_2<- sampleKeyTNFATGFB
-combined_headers <- c(sheet3_1, sheet3_2)
-combined_spreadsheet <- as.matrix(read.table("combine_test.txt"))
-colnames(combined_spreadsheet) <- combined_headers
-combined_spreadsheet <- combined_spreadsheet[order(combined_spreadsheet[,1]),] 
-
-#sort by the first column
-write.table(
-	combined_spreadsheet,
-	file="combined_spreadsheet.txt", 
-	sep = "\t", 
-	row.names = FALSE
-)
+sheet3_1 <- list("Genename","Genename","Geneid","Mapp","PC1","PC2","PC3")sheet3_2<- sampleKeyTNFATGFBcombined_headers <- c(sheet3_1, sheet3_2)combined_spreadsheet <- as.matrix(read.table("combine_test.txt"))colnames(combined_spreadsheet) <- combined_headerscombined_spreadsheet <- combined_spreadsheet[order(combined_spreadsheet[,1]),] #sort by the first columnwrite.table(combined_spreadsheet,file="combined_spreadsheet.txt", sep = "\t", row.names = FALSE)
 ```
 
 You can sort this sheet with PC1, PC2, and so on to see the corelation between the treatment and the expression level in each gene.
