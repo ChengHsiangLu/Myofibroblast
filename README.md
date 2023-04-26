@@ -295,7 +295,7 @@ ls *.sense.tab \
 Make count tables for sense, anti-sense, nostrand, ambiguous, and nofeature reads.
 
 ```  
-****
+
 # combine all sense counts into RBarretTNFATGFB_sense.ALL.cnt 
 paste *.sense.tab > RBarretTNFATGFB_sense.ALL.cnt   
 
