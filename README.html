@@ -1,0 +1,488 @@
+<h1 id="perform-differential-expression-analysis-on-fibrotic-and-non-fibrotic-patients-under-4-different-treatments-on-hpc">Perform differential expression analysis on fibrotic and non-fibrotic patients under 4 different treatments on HPC</h1>
+<p><br></p>
+<h2 id="author">Author</h2>
+<p>Sam (Cheng-Hsiang) Lu</p>
+<p>Email: Cheng-Hsiang.Lu@cshs.org</p>
+<p><br></p>
+<h2 id="mentor">Mentor</h2>
+<p>David Casero</p>
+<p>Email: David.Casero@cshs.org</p>
+<p><br></p>
+<h2 id="background">Background</h2>
+<h3 id="inflammatory-bowel-diseasesibd">Inflammatory bowel diseases(IBD)</h3>
+<p>Inflammatory bowel diseases (IBD) are a group of chronic conditions that cause inflammation and damage to the digestive tract. The two main types of IBD are Crohn’s Disease and Ulcerative Colitis.</p>
+<p>Crohn’s disease can affect any part of the digestive tract, like small or large intestine, and can cause symptoms such as abdominal pain, diarrhea, weight loss, and fatigue. It can also cause complications such as fistulas (abnormal connections between different parts of the intestine) and strictures (narrowing of the intestine).</p>
+<p>Ulcerative colitis, on the other hand, affects only the colon and rectum and causes symptoms such as bloody diarrhea, abdominal pain, and a frequent need to pass stools. It can also lead to complications such as inflammation of the skin, eyes, and joints.</p>
+<p>Both Crohn’s disease and ulcerative colitis are chronic conditions, meaning they can last for a lifetime and require ongoing treatment to manage symptoms and prevent complications.</p>
+<p><br></p>
+<h3 id="induced-pluripotent-stem-cellsipscs">Induced Pluripotent Stem Cells(iPSCs)</h3>
+<p>Induced pluripotent stem cells (iPSCs) are a type of stem cell that are generated in the laboratory by reprogramming adult cells, such as skin or blood cells, to a pluripotent state. A pluripotent state means that the cells have the potential to develop into any type of cell in the body, just like embryonic stem cells.</p>
+<p>iPSCs offer several advantages as they can be generated from the patient’s own cells, avoiding issues with immune rejection, ethical concerns and the need for embryos.</p>
+<p>iPSCs can be used to study the underlying causes of diseases, test new drugs and therapies, and potentially generate replacement tissues or organs for transplantation.</p>
+<p><br></p>
+<h2 id="aim">Aim</h2>
+<p>In this project, we will be analyzing RNA-seq data from 19 samples, comprising of 10 samples with fibrotic complications and 9 non-fibrotic samples. Each sample has undergone two runs and 4 different treatments(untreated, TGF-b, TNF-ɑ, and TGF-b+TNF-ɑ), resulting in a total of 151 samples(1 library failed). We used induced pluripotent stem cells (iPSC) to differentiate into myofibroblasts and stimulated the system with different signals to observe its development. The objective is to investigate the effect of four different treatments: untreated, TGF-B, TNF-A, and TGF-B+TNF-A on the development of the system. In the end, we will perform differential expression analysis to identify the genes that are differentially expressed in fibrotic and non-fibrotic samples under 4 treatments.</p>
+<p><br></p>
+<h2 id="pipelines">Pipelines</h2>
+<h3 id="in-hpc">In HPC</h3>
+<h4 id="convert-151-fastq-to-fasta-files">Convert 151 Fastq to Fasta files</h4>
+<p>First, put all fasq.gz files into one folder and list all fastq files’ name in fastqfiles.txt.</p>
+<pre><code>
+ls *q.gz &gt; fastqfiles.txt
+</code></pre>
+<p>Cut redundant suffix “_R1_trimmed” and list all fastq files’ name in libraryname.txt and preffix.txt.</p>
+<pre><code>
+ls *q.gz | cut -f 1 -d &#39;.&#39; | sed &#39;s/_R1_trimmed//g&#39;  &gt;libraryname.txt 
+
+ls *q.gz | cut -f 1 -d &#39;.&#39; | sed &#39;s/_R1_trimmed//g&#39; &gt; preffix.txt
+</code></pre>
+<p>Form a table with 3 columns: fastqfiles.txt libraryname.txt preffix.txt.</p>
+<pre><code>
+paste fastqfiles.txt libraryname.txt preffix.txt &gt; tofastatable.txt
+</code></pre>
+<p>Create small-sized fasta-formatted files. To submit this job to the cluster on HPC, you need to read the file, library, and prefix. Once you have done that, run the script “generatefastaFromFastaqz” which combine the script “DCfastaqTofastaLibraryId.pl”. This results in small-sized fasta-formatted files contain only one header and one sequence per read. You can find all scripts in the “scripts” folder.</p>
+<pre><code>
+cat tofastatable.txt | awk {print}&#39; | while read file library preffix ; do qsub -cwd -o $PWD -e $PWD -l h_data=2048M,h_rt=8:00:00 $HOME/scripts/generatefastaFromFastaqz $file $library $preffix  
+
+done 
+</code></pre>
+<p>This is what each fasta-formatted file would look like:</p>
+<p><img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/fasta_formatted.png" /></p>
+<p><br></p>
+<h4 id="generate-auxiliary-files-and-directories-for-each-sample">Generate auxiliary files and directories for each sample</h4>
+<p>Put a list of names of all fasta files in the directory and save them in a text file named “fastafiles.txt”.</p>
+<pre><code>
+ls *fasta.gz &gt; fastafiles.txt
+</code></pre>
+<p>Cut the redundant suffix “.fasta.gz” from the names of all fasta files and generate a new list of file names with the suffix removed in a text file named “targetdirectories.GTF.txt”.</p>
+<pre><code>
+cat fastafiles.txt |sed &#39;s/.fasta.gz//g&#39; &gt; targetdirectories.GTF.txt
+</code></pre>
+<p>Create a separate directory for each sample listed in “fastafiles.txt”.</p>
+<pre><code>
+cat fastafiles.txt |while read line ; do mkdir ${line/.fasta\.gz/GTFpass1/} ; done
+</code></pre>
+<p><br></p>
+<h4 id="form-the-submission-script-called-sendmyof">Form the submission script called “sendmyof”</h4>
+<p>Add a shebang line at the beginning of your script file named “sendmyof” to indicate the interpreter that should be used to execute the script.</p>
+<pre><code>
+echo &#39;#!/bin/bash/&#39; &gt; sendmyof
+</code></pre>
+<p>The command below runs the “generatesendscriptSingleGTFParam” script with several input parameters to map the RNA-seq data with STAR. The input parameters include the list of target directories containing the input data (“targetdirectories.GTF.txt”), the subdirectory name (“GTFpass1”), a parameter file containing settings for STAR alignment (“Parameters.txt”), a prefix for output files (“myof”), the path to the STAR index directory (“/home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/”), the path to the input data directory (“/home/luc/iPSC/MYOFIBROBLAST/”), the amount of free memory to use (“mem_free=32G”), and the number of threads to use (“8”). In the end, it will generate a “processLaneSingleGTFParam” file and run the STAR package in each sample’s folder.</p>
+<pre><code>
+./generatesendscriptSingleGTFParam targetdirectories.GTF.txt GTFpass1 Parameters.txt myof /home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/ /home/luc/iPSC/MYOFIBROBLAST/ mem_free=32G 8 &gt;&gt; sendmyof 
+</code></pre>
+<p>Change sendmyof into executable mode and run sendmyof.</p>
+<pre><code>
+chmod a+x sendmyof 
+. sendmyof 
+</code></pre>
+<p>It will take less than one day to run through 151 samples and generate each sample a folder which contain every output from STAR.</p>
+<p><br></p>
+<h4 id="create-a-table-summarizing-the-mapping-statistics-for-each-sample">Create a table summarizing the mapping statistics for each sample</h4>
+<p>Change directory into one sample file which ends with “GTFpass1”. Extract the first column from the mapping statistics file and store it in “temp2.txt”.</p>
+<pre><code>
+grep &quot;|&quot; 008iP22TGFbM_S71GTFpass1/008iP22TGFbM_S71GTFpass1Log.final.out | cut -f 1 -d &quot;|&quot; | sed &#39;s/^  *//g&#39; | awk &#39;NR&gt;3 {print}&#39; &gt; temp2.txt 
+</code></pre>
+<p>The first column from the mapping statistics file.</p>
+<p><img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/mapping_statistics.jpg" /></p>
+<p><br></p>
+<p>Create an empty temporary file for storing intermediate results.</p>
+<pre><code>
+rm tempprev.txt 
+touch tempprev.txt
+</code></pre>
+<p>Extract the total mapped reads from each subsequent mapping statistics file and combine with previous results.</p>
+<pre><code>
+ls *pass1/*final.out | while read line ; do  
+grep &quot;|&quot; $line | cut -f 2  &gt; temp.txt 
+paste tempprev.txt temp.txt &gt; tempnew.txt 
+mv tempnew.txt tempprev.txt 
+done 
+</code></pre>
+<p>Remove the first column and write the final results to a file called “mappingstatsFirstpass.txt”.</p>
+<pre><code>
+cut -f 2- tempprev.txt | awk &#39;NR&gt;3 {print}&#39;  &gt; tempnew.txt 
+mv tempnew.txt tempprev.txt 
+paste temp2.txt tempprev.txt &gt; mappingstatsFirstpass.txt 
+</code></pre>
+<p>The mappingstatsFirstpass.txt would look like this:</p>
+<p><img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/mappingstatsFirstpass.jpg" /></p>
+<p><br></p>
+<h4 id="counts">Counts</h4>
+<p>Generate a directory called “COUNTS” and copy all gene count files to this folder and then clean all file names.</p>
+<pre><code>
+mkdir COUNTS 
+cp *pass1/*PerGene* COUNTS/ 
+</code></pre>
+<pre><code>
+ls *tab|while read line ; do mv $line ${line/GTFpass1ReadsPerGene.out/} ; done 
+</code></pre>
+<p>For each count file, extract and create the five count tables.</p>
+<pre><code>
+ls *.tab | while read line ; do 
+echo $line 
+cat $line | awk &#39;NR==3{print}&#39; | cut -f 2- &gt; ${line/tab/nofeature\.tab} 
+cat $line | awk &#39;NR==4{print}&#39; | cut -f 2- &gt; ${line/tab/ambiguous\.tab} 
+cat $line | awk &#39;NR&gt;4{print}&#39; | cut -f 2 &gt; ${line/tab/nostrand\.tab} 
+cat $line | awk &#39;NR&gt;4{print}&#39; | cut -f 3 &gt; ${line/tab/sense\.tab} 
+cat $line | awk &#39;NR&gt;4{print}&#39; | cut -f 4 &gt; ${line/tab/antisense\.tab} 
+done 
+</code></pre>
+<p>Make a Geneid list from one of the count tables as “countsannot_GRCh38.primary.Selected.Geneid.txt”.</p>
+<pre><code>
+ls 008iP22TGFbM_S71.tab | head -1 | while read line; do  
+cut -f 1 $line | awk &#39;NR&gt;4{print}&#39; &gt; countsannot_GRCh38.primary.Selected.Geneid.txt 
+done 
+</code></pre>
+<p>Create a file listing the names of all samples as “RBarretTNFATGFBsamples.txt”.</p>
+<pre><code>
+ls *.sense.tab | sed &#39;s/.sense.tab//g&#39; | tr -s &quot; &quot; &quot;\n&quot; | sed &#39;s/_1//g&#39; &gt; RBarretTNFATGFBsamples.txt 
+</code></pre>
+<p>Make count tables for sense, anti-sense, nostrand, ambiguous, and nofeature reads.</p>
+<pre><code>
+# combine all sense counts into RBarretTNFATGFB_sense.ALL.cnt 
+paste *.sense.tab &gt; RBarretTNFATGFB_sense.ALL.cnt   
+
+# combine all antisense counts into RBarretTNFATGFB_antisense.ALL.cnt 
+paste *.antisense.tab &gt; RBarretTNFATGFB_antisense.ALL.cnt   
+
+# combine all nostrand counts into RBarretTNFATGFB_nostrand.ALL.cnt 
+paste *.nostrand.tab &gt; RBarretTNFATGFB_nostrand.ALL.cnt 
+
+# combine all ambiguous counts into RBarretTNFATGFB_ambiguous.cnt 
+cat *ambiguous.tab &gt; RBarretTNFATGFB_ambiguous.cnt   
+
+# combine all nofeature counts into RBarretTNFATGFB_nofeature.cnt 
+cat *nofeature.tab &gt; RBarretTNFATGFB_nofeature.cnt 
+</code></pre>
+<p>Next, I am going to use “RBarretTNFATGFB_antisense.ALL.cnt” file for the further analysis.</p>
+<p><br></p>
+<h3 id="in-matlab">In MATLAB</h3>
+<h4 id="transfer-data-and-import-annotation">Transfer data and import annotation</h4>
+<p>Transfer the counts, annotation, and mappability data to your local laptop.</p>
+<pre><code>
+RBarretTNFATGFBCnt = textread(&#39;RBarretTNFATGFB_antisense.ALL.cnt&#39;,&#39;&#39;);
+RBarretsamplesTNFATGFB = textread(&#39;RBarretTNFATGFBsamples.txt&#39;,&#39;%s&#39;);
+RBarretsampleskeysTNFATGFB = textread(&#39;samplekeys_Sam.txt&#39;,&#39;%s&#39;);
+
+% calculate the sum of the counts in RBarretTNFATGFBCnt, divides the result by 1000000, and rounds the result to the nearest integer. 
+RBarretTNFATGFBmeta_seqdepth=round(sum(RBarretTNFATGFBCnt)/1000000);
+</code></pre>
+<p>You can find these annotation in the “mappability and R code” folder.</p>
+<pre><code>
+Gencode_33_Selected_MappSS=textread(&#39;mappability and R code/gencode.v33.Selected.ReadsPerGene.out.MappSS.txt&#39;,&#39;&#39;);
+Gencode_33_Selected_MappUS=textread(&#39;mappability and R code/gencode.v33.Selected.ReadsPerGene.out.MappUS.txt&#39;,&#39;&#39;);
+Gencode_33_Selected_Geneid=textread(&#39;mappability and R code/gencode.v33.annotation.Selected.geneid.txt&#39;,&#39;%s\n&#39;);
+Gencode_33_Selected_Biotype=textread(&#39;mappability and R code/gencode.v33.annotation.Selected.biotype.txt&#39;,&#39;%s\n&#39;);
+Gencode_33_Selected_Genename=textread(&#39;mappability and R code/gencode.v33.annotation.Selected.genename.txt&#39;,&#39;%s\n&#39;);
+</code></pre>
+<p><br></p>
+<h4 id="compile-counts">Compile counts</h4>
+<p>First, initialize a new variable called RBarretTNFATGFBTPM with the same count data as RBarretTNFATGFBCnt. Then, iterates over each gene in the count data matrix. For each gene, the corresponding row in RBarretTNFATGFBTPM is updated by dividing the count data by the read counts from the “Gencode_33_Selected_MappSS”, multiplying by 1000, and storing the result in RBarretTNFATGFBTPM.</p>
+<p>Finally, iterates over each sample in the TPM data matrix. For each sample, the corresponding column in RBarretTNFATGFBTPM is updated by dividing the values in the column by the sum of the values in the column, multiplying by 1,000,000, and storing the result in RBarretTNFATGFBTPM. This step <strong>normalizes the TPM values</strong> across samples and scales the resulting values to TPM.</p>
+<pre><code>
+RBarretTNFATGFBTPM = RBarretTNFATGFBCnt;
+for i=1:size(RBarretTNFATGFBCnt,1)
+% divid the gene count matrix RBarretTNFATGFBCnt by Gencode_33_Selected_MappSS matrix, which is the sum of the transcript length of each gene
+RBarretTNFATGFBTPM(i,:) = RBarretTNFATGFBCnt(i,:)/Gencode_33_Selected_MappSS(i)*1000;
+end
+% set any NaN or Inf values resulting from the normalization process to 0
+RBarretTNFATGFBTPM(isnan(RBarretTNFATGFBTPM)) = 0;
+RBarretTNFATGFBTPM(isinf(RBarretTNFATGFBTPM)) = 0;
+for i=1:size(RBarretTNFATGFBTPM,2)
+% scale the TPM values so that the sum of expression values across each sample of the matrix is equal to 1,000,000. This ensures that the expression values are comparable across different samples and allows meaningful comparisons of gene expression levels between different samples.
+RBarretTNFATGFBTPM(:,i) = RBarretTNFATGFBTPM(:,i)/sum(RBarretTNFATGFBTPM(:,i))*1000000;
+end
+</code></pre>
+<p><br></p>
+<h4 id="make-the-first-dendrogram">Make the first dendrogram</h4>
+<p>Make a dendrogram to visualize the relationships among samples in the RBarretTNFATGFB dataset based on their gene expression profiles.</p>
+<ol type="1">
+<li>I generates a random selection of 1,000 genes from the TPM data matrix.</li>
+<li>Calculates the pairwise distances between the selected genes.</li>
+<li>Creates a for loop that iterates 9,999 times. For each iteration, a new random selection of 1,000 genes is generated, and the pairwise distances between these genes are added to the previous ‘thisdist’ calculation.</li>
+<li>Converts the one-dimensional distance vector ‘thisdist’ into a distance matrix ‘thisdistmat’ using the ‘squareform’ function.</li>
+<li>Generates a hierarchical clustering tree based on the distance matrix ‘thisdistmat’.</li>
+</ol>
+<p>Overall, I perform a clustering analysis on a subset of genes in the RBarretTNFATGFB dataset to visualize the relationships among samples based on their gene expression profiles.</p>
+<pre><code>
+thisrand = unique(randi([1 size(RBarretTNFATGFBTPM,1)],1,1000));
+thisdist = pdist(RBarretTNFATGFBTPM(thisrand,:)&#39;);
+for i=1:9999
+thisrand = unique(randi([1 size(RBarretTNFATGFBTPM,1)],1,1000));
+thisdist = thisdist+pdist(RBarretTNFATGFBTPM(thisrand,:)&#39;);
+end
+thisdistmat = squareform(thisdist/10000);
+thistree = seqlinkage(thisdistmat,&#39;average&#39;, RBarretsamplesTNFATGFB)
+plot(thistree, &#39;ORIENTATION&#39;, &#39;top&#39;)
+</code></pre>
+<p><img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/first_dendrogram.jpg" /></p>
+<p><br></p>
+<h4 id="all-biotypes-counts-percents">All biotypes counts percents</h4>
+<p>This part of codes is performing all biotypes counts percents across multiple samples.</p>
+<pre><code>
+% use the unique function and stored the allbiotypes variable.
+allbiotypes = unique(Gencode_33_Selected_Biotype);
+
+% create A cell array allbiotypeslength to store the lengths of each biotype name.
+allbiotypeslength = cell(length(allbiotypes),1);
+
+% two new matrices, allbiotypescounts and allbiotypescountspercents, are initialized with zeros. These matrices have dimensions (number of unique biotypes) x (number of samples in the TPM data). They will be used to store the number of reads (counts) and the percentage of total reads (%TPM) for each biotype in each sample.
+allbiotypescounts = zeros(length(allbiotypes),size(RBarretTNFATGFBCnt,2));
+allbiotypescountspercents = zeros(length(allbiotypes),size(RBarretTNFATGFBCnt,2));
+
+for i=1:length(allbiotypes)
+%  finds all the indices of Gencode_33_Selected_Biotype that match the current biotype. Then, returned a vector of **indices** where the biotype occurs in Gencode_33_Selected_Biotype.
+temp = strmatch(allbiotypes{i}, Gencode_33_Selected_Biotype);
+% Stored the length of the temp vector represents the number of genes with the current biotype in the Gencode_33_Selected_Biotype.
+allbiotypeslength{i} = length(temp);
+if length(temp)&gt;1
+% Sum the expression values for all genes with the current biotype across all samples. The resulting sums are stored in the corresponding row of the allbiotypescounts matrix.
+allbiotypescounts(i,:) = sum(RBarretTNFATGFBCnt(strmatch(allbiotypes{i}, Gencode_33_Selected_Biotype),:)); 
+allbiotypescountspercents(i,:) = allbiotypescounts(i,:)./sum(RBarretTNFATGFBCnt)*100; 
+end
+end
+
+dlmwrite(&#39;allbiotypescountspercents.txt&#39;, allbiotypescountspercents,&#39;delimiter&#39;,&#39;\t&#39;)
+writetable(cell2table(allbiotypes),&#39;allbiotypes.txt&#39;,&#39;WriteVariableNames&#39;,0)
+</code></pre>
+<p>Using Excel, create a spreadsheet using “allbiotypes.txt” and “allbiotypescountspercents.txt”, and calculate the minimum, maximum, and average values for each biotype. You can access my completed spreadsheet <a href="/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx">here</a>. Notably, protein_coding genes exhibit an average of 98.65% among the various biotypes, consistent with my expectations. <img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/spreadsheet_allbiotypescountspercents.jpg" /></p>
+<p><br></p>
+<h4 id="protein-coding-genes">Protein coding genes</h4>
+<p>The “allbiotypes.txt” file contains multiple biotypes. For the next step, I will only retain the “protein_coding” biotype.</p>
+<pre><code>
+allbiotypes=unique(Gencode_33_Selected_Biotype);
+% finds the 15th unique value, which is protein_coding, of Gencode_33_Selected_Biotype in the array proteincodingindx.
+proteincodingindx = strmatch(allbiotypes{15}, Gencode_33_Selected_Biotype);
+biotypeindx = proteincodingindx;
+
+% creates an array additionalgenes contains the indices of genes that have certain prefixes such as &#39;MT-&#39;, &#39;H1&#39;, &#39;H2&#39;, &#39;H3&#39;, &#39;H4&#39;, &#39;RPL&#39;, or &#39;RPS&#39; in their names.
+additionalgenes = [strmatch(&#39;MT-&#39;,Gencode_33_Selected_Genename) ; strmatch(&#39;H1&#39;,Gencode_33_Selected_Genename); strmatch(&#39;H2&#39;,Gencode_33_Selected_Genename); strmatch(&#39;H3&#39;,Gencode_33_Selected_Genename); strmatch(&#39;H4&#39;,Gencode_33_Selected_Genename) ; strmatch(&#39;RPL&#39;,Gencode_33_Selected_Genename) ; strmatch(&#39;RPS&#39;,Gencode_33_Selected_Genename)];
+
+% creates an array nonadditionalgenes with the same length as the Gencode_33_Selected_Genename array.   
+nonadditionalgenes = 1:length(Gencode_33_Selected_Genename);
+% remove the indices of genes in additionalgenes from the nonadditionalgenes array.
+nonadditionalgenes(additionalgenes) = [];
+
+% mappableindx contains the indices of elements in the Gencode_33_Selected_MappSS array that are greater than 50.
+mappableindx = find(Gencode_33_Selected_MappSS&gt;50);
+</code></pre>
+<pre><code>
+% a new variable finalIndexGeneric which is the intersection of three other variables: biotypeindx, nonadditionalgenes, and mappableindx.
+finalIndexGeneric = intersect(biotypeindx,intersect(nonadditionalgenes,mappableindx));          
+% find the indices of rows in RBarretTNFATGFBCnt that have a sum greater than 150. 
+countindx = find(sum(RBarretTNFATGFBCnt&#39;)&#39;&gt;150);
+
+% update finalIndexGeneric to be the intersection of finalIndexGeneric and countindx.
+finalIndexGeneric=intersect(finalIndexGeneric,countindx);
+</code></pre>
+<pre><code>
+% create a new variable RBarretTNFATGFBCnt_GMask which is a subset of RBarretTNFATGFBCnt corresponding to the rows indexed by finalIndexGeneric.
+RBarretTNFATGFBCnt_GMask = RBarretTNFATGFBCnt(finalIndexGeneric,:);
+
+Gencode_33_Selected_Geneid_GMask = Gencode_33_Selected_Geneid(finalIndexGeneric);
+Gencode_33_Selected_Genename_GMask = Gencode_33_Selected_Genename(finalIndexGeneric);
+Gencode_33_Selected_MappSS_GMask = Gencode_33_Selected_MappSS(finalIndexGeneric);
+Gencode_33_Selected_MappUS_GMask = Gencode_33_Selected_MappUS(finalIndexGeneric);
+</code></pre>
+<pre><code>
+% normalize the expression data like we do previously
+RBarretTNFATGFBExpression_GMask = RBarretTNFATGFBCnt_GMask;
+for i=1:size(RBarretTNFATGFBExpression_GMask,2)
+RBarretTNFATGFBExpression_GMask(:,i) = RBarretTNFATGFBCnt_GMask(:,i)/sum(RBarretTNFATGFBCnt_GMask(:,i))*1000000;
+end
+for i=1:size(RBarretTNFATGFBExpression_GMask)
+RBarretTNFATGFBExpression_GMask(i,:) = RBarretTNFATGFBExpression_GMask(i,:)/Gencode_33_Selected_MappSS_GMask(i)*1000;
+end
+RBarretTNFATGFBExpression_GMask(isnan(RBarretTNFATGFBExpression_GMask)) = 0;
+RBarretTNFATGFBExpression_GMask(isinf(RBarretTNFATGFBExpression_GMask)) = 0;
+
+% RBarretTNFATGFBCPM_GMask contains the expression data normalized only by CPM, using the same normalization method as the code above.
+RBarretTNFATGFBCPM_GMask = zeros(size(RBarretTNFATGFBCnt_GMask));
+for i=1:size(RBarretTNFATGFBCnt_GMask,2)
+RBarretTNFATGFBCPM_GMask(:,i) = RBarretTNFATGFBCnt_GMask(:,i)/sum(RBarretTNFATGFBCnt_GMask(:,i))*1000000;
+end
+
+% RBarretTNFATGFBTPM_GMask contains the expression data normalized only by TPM.
+RBarretTNFATGFBTPM_GMask = RBarretTNFATGFBCnt_GMask;
+for i=1:size(RBarretTNFATGFBCnt_GMask,1)
+RBarretTNFATGFBTPM_GMask(i,:) = RBarretTNFATGFBCnt_GMask(i,:)/Gencode_33_Selected_MappSS_GMask(i)*1000;
+end
+RBarretTNFATGFBTPM_GMask(isnan(RBarretTNFATGFBTPM_GMask)) = 0;
+RBarretTNFATGFBTPM_GMask(isinf(RBarretTNFATGFBTPM_GMask)) = 0;
+for i=1:size(RBarretTNFATGFBTPM_GMask,2)
+RBarretTNFATGFBTPM_GMask(:,i) = RBarretTNFATGFBTPM_GMask(:,i)/sum(RBarretTNFATGFBTPM_GMask(:,i))*1000000;
+end
+</code></pre>
+<p><br></p>
+<h4 id="dendrogram-with-only-protein-coding-genes">Dendrogram with only protein coding genes</h4>
+<p>Perform hierarchical clustering on a subset of the gene expression data stored in the variable RBarretTNFATGFBTPM_GMask with only protein coding genes.</p>
+<pre><code>
+thisrand = unique(randi([1 size(RBarretTNFATGFBTPM_GMask,1)],1,1000));
+thisdist = pdist(RBarretTNFATGFBTPM_GMask(thisrand,:)&#39;);
+for i=1:9999
+thisrand = unique(randi([1 size(RBarretTNFATGFBTPM_GMask,1)],1,1000));
+thisdist = thisdist+pdist(RBarretTNFATGFBTPM_GMask(thisrand,:)&#39;);
+end
+thisdistmat = squareform(thisdist/10000);
+thistree = seqlinkage(thisdistmat,&#39;average&#39;, RBarretsampleskeysTNFATGFB)
+plot(thistree,&#39;ORIENTATION&#39;,&#39;top&#39;)
+</code></pre>
+<p>Basically, the plot is clustered by their treatments.</p>
+<p><img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/Second_dendrogram.jpg" /></p>
+<p><br></p>
+<h4 id="the-percent-of-the-top-100-genes">The percent of the top 100 genes</h4>
+<p>Calculates the top 100 expressed genes in each sample based on their transcript per million (TPM) values in the RBarretTNFATGFBTPM_GMask matrix.</p>
+<pre><code>
+% iterates over 151 samples, it first sorts the TPM values of all genes in descending order and stores the indices of the sorted genes in y. The top 100 expressed genes in the sample are obtained by selecting the first 100 indices in y, and these indices are appended to a running list of all top 100 indices yall.
+yall=[];
+for i=1:151
+[x y]=sort(RBarretTNFATGFBTPM_GMask(:,i),&#39;descend&#39;);
+yall=unique([y(1:100); yall]);
+top100percent(i)=sum(RBarretTNFATGFBTPM_GMask(y(1:100),i))/1000000;
+end
+</code></pre>
+<p>After calculating the sum of the percent of the top 100 genes, it is 58.25%.</p>
+<p>In the end, we store the Gencode_33_Selected_Geneid_GMask.txt, Gencode_33_Selected_Genename_GMask.txt, Gencode_33_Selected_MappSS_GMask.txt, RBarretTNFATGFBTPM_GMask.txt, and RBarretTNFATGFBCnt_GMask.txt for ours further analysis in R.</p>
+<pre><code>
+writetable(cell2table(Gencode_33_Selected_Geneid_GMask),&#39;Gencode_33_Selected_Geneid_GMask.txt&#39;,&#39;WriteVariableNames&#39;,0)
+writetable(cell2table(Gencode_33_Selected_Genename_GMask),&#39;Gencode_33_Selected_Genename_GMask.txt&#39;,&#39;WriteVariableNames&#39;,0)
+dlmwrite(&#39;Gencode_33_Selected_MappSS_GMask.txt&#39;, Gencode_33_Selected_MappSS_GMask,&#39;delimiter&#39;,&#39;\t&#39;)
+dlmwrite(&#39;RBarretTNFATGFBTPM_GMask.txt&#39;, RBarretTNFATGFBTPM_GMask,&#39;delimiter&#39;,&#39;\t&#39;)
+dlmwrite(&#39;RBarretTNFATGFBCnt_GMask.txt&#39;, RBarretTNFATGFBCnt_GMask,&#39;delimiter&#39;,&#39;\t&#39;)
+</code></pre>
+<p><br></p>
+<h3 id="in-r">In R</h3>
+<h4 id="install-packages">Install packages</h4>
+<p>First, install packages BiocManager, BiocLite, IHW, DESeq2, and ggplot2. Then, read in RBarretTNFATGFBCnt_GMask.txt, RBarretTNFATGFBsamples.txt, samplekeys_Sam.txt, and Gencode_33_Selected_Genename_GMask.txt.</p>
+<pre><code>
+setwd(&quot;/Users/LuC/Desktop/Cedars-Sinai/PROJECTS/IBD_RNASeq/RBARRETTNFATGFB/&quot;)#setwd(&quot;/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/IBD_RNASeq/RBARRETTNFATGFB/&quot;)if (!requireNamespace(&quot;BiocManager&quot;, quietly = TRUE))  install.packages(&quot;BiocManager&quot;)#BiocManager::install(&quot;BiocLite&quot;)#BiocManager::install(&quot;IHW&quot;)#BiocManager::install(&quot;DESeq2&quot;)#install.packages(&quot;ggplot2&quot;)library(DESeq2)library(IHW)library(ggplot2)library(ggrepel)RBarretTNFATGFBCntGMask = as.matrix(read.table(&quot;RBarretTNFATGFBCnt_GMask.txt&quot;))sampleNameTNFATGFB = as.matrix(read.table(&quot;RBarretTNFATGFBsamples.txt&quot;))sampleKeyTNFATGFB = as.matrix(read.table(&quot;samplekeys_Sam.txt&quot;))genenames = as.matrix(read.table(&quot;Gencode_33_Selected_Genename_GMask.txt&quot;))</code></pre>
+<p><br></p>
+<h4 id="form-samplekeys_sam.tab">Form samplekeys_Sam.tab</h4>
+<p>Separate samplekeys_Sam.txt by “_” to get samplekeys_Sam.tab before next step. Here are my code in terminal.</p>
+<pre><code>
+#In terminal
+#Create an empty file to store the output
+touch samplekeys_Sam.tab
+
+#Loop over the sample names and split them by &quot;_&quot;
+for sample in $(cat samplekeys_Sam.txt); do
+    IFS=_ read -r col1 col2 col3 col4 col5 &lt;&lt;&lt; &quot;$sample&quot;
+    echo -e &quot;$col1\t$col2\t$col3\t$col4\t$col5&quot; &gt;&gt; samplekeys_Sam.tab 
+done
+</code></pre>
+<p><br></p>
+<h4 id="generate-a-sampletabletnfatgfb">Generate a sampleTableTNFATGFB</h4>
+<p>The sampleTableTNFATGFB contains Treatment, Line, Pheno, Sex, Pass, Factor, and Batch.</p>
+<pre><code>sampleTableTNFATGFB = read.table(&quot;samplekeys_Sam.tab&quot;)rownames(sampleTableTNFATGFB)&lt;-sampleKeyTNFATGFBcolnames(sampleTableTNFATGFB)&lt;- c(&quot;Treatment&quot;,&quot;Line&quot;,&quot;Pheno&quot;,&quot;Sex&quot;,&quot;Pass&quot;)sampleTableTNFATGFB$Factor &lt;- paste(sampleTableTNFATGFB$Treatment,sampleTableTNFATGFB$Pheno,sep=&quot;_&quot;)#concatenating the &quot;Line&quot; and &quot;Pass&quot; columns with an underscore separatorsampleTableTNFATGFB$Batch &lt;- paste(sampleTableTNFATGFB$Line,sampleTableTNFATGFB$Pass,sep=&quot;_&quot;)colnames(RBarretTNFATGFBCntGMask) &lt;- sampleKeyTNFATGFBwrite.table(sampleTableTNFATGFB,file=&quot;sampleTableTNFATGFB.txt&quot;, sep = &quot;\t&quot;, col.names = FALSE)</code></pre>
+<p><img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/sampleTableTNFATGFB.png" /></p>
+<p><br></p>
+<h4 id="deseq2-package">DESeq2 package</h4>
+<p>The RBarretTNFATGFBCntGMaskBatch is created with the <strong>Batch</strong> information specified in the design formula, while the RBarretTNFATGFBCntGMaskFactor is created with the <strong>treatment and phenotype</strong> information specified in the design formula.</p>
+<p>Next, the DESeq function is used to estimate size factors and dispersion values for the DESeqDataSet objects.</p>
+<p>Finally, the varianceStabilizingTransformation function is used to perform variance stabilizing transformation on the DESeqDataSet objects. This transformation is important for reducing the effect of noise and heteroscedasticity in the data, making it more suitable for downstream analyses such as differential gene expression analysis.</p>
+<pre><code>RBarretTNFATGFBCntGMaskBatch &lt;- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= sampleTableTNFATGFB,design= ~Batch)RBarretTNFATGFBCntGMaskBatch &lt;- DESeq(RBarretTNFATGFBCntGMaskBatch)RBarretTNFATGFBCntGMaskFactor &lt;- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= sampleTableTNFATGFB,design= ~Factor)RBarretTNFATGFBCntGMaskFactor &lt;- DESeq(RBarretTNFATGFBCntGMaskFactor)RBarretTNFATGFBCntGMaskBatch_vsd &lt;- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskBatch,blind=FALSE)RBarretTNFATGFBCntGMaskFactor_vsd &lt;- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskFactor,blind=FALSE)</code></pre>
+<p><br></p>
+<h4 id="pca">PCA</h4>
+<pre><code>#perform principal component analysis (PCA) on the variance-stabilized counts data pcabatch &lt;- prcomp(t(assay(RBarretTNFATGFBCntGMaskBatch_vsd)))
+#give the percentage of variance explained by each principal componentpercentVarbatch &lt;- round(100*pcabatch$sdev^2/sum(pcabatch$sdev^2))
+#pcabatch$rotation is a matrix containing the loadings of the principal components.aloadbatch &lt;- abs(pcabatch$rotation)
+
+#normalize the loadings in aloadbatch so that each column (i.e., PC) sums to 1. aloadrelativebatch &lt;- sweep(aloadbatch, 2, colSums(aloadbatch), &quot;/&quot;)
+#pcabatch$x is a matrix containing each sample&#39;s coordinate on each principal componentpcabatchALL &lt;- pcabatch$xpcabatchR&lt;- cbind(pcabatchALL,sampleTableTNFATGFB)
+#center the PC1 scores in pcabatchR to have a mean of 0. This is done so that the PC1 variable can be used as a covariate in the subsequent differential expression analysis.pcabatchR$PC1 &lt;- scale(pcabatchR$PC1, center = TRUE)RBarretTNFATGFBCntGMaskPC1 &lt;- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= pcabatchR,design= ~PC1)RBarretTNFATGFBCntGMaskPC1 &lt;- DESeq(RBarretTNFATGFBCntGMaskPC1)RBarretTNFATGFBCntGMaskPC1_vsd &lt;- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskPC1,blind=FALSE)</code></pre>
+<p><br></p>
+<h4 id="pca-plots">PCA plots</h4>
+<pre><code>ggplot(pcabatchR, aes(PC1, PC2, color= Pheno)) +  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Pheno),color=&quot;black&quot;,alpha=0.2) +  xlab(paste0(&quot;PC1: &quot;,percentVarbatch[1],&quot;% variance&quot;)) +  ylab(paste0(&quot;PC2: &quot;,percentVarbatch[2],&quot;% variance&quot;)) +  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = &#39;grey50&#39;)+ theme_bw()ggplot(pcabatchR, aes(PC1, PC2, color= Sex)) +  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Treatment),color=&quot;black&quot;,alpha=0.2) +  xlab(paste0(&quot;PC1: &quot;,percentVarbatch[1],&quot;% variance&quot;)) +  ylab(paste0(&quot;PC2: &quot;,percentVarbatch[2],&quot;% variance&quot;)) + theme_bw()ggplot(pcabatchR, aes(PC2, PC9, color= Pheno)) +  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Treatment),color=&quot;black&quot;,alpha=0.2) +  xlab(paste0(&quot;PC2: &quot;,percentVarbatch[2],&quot;% variance&quot;)) +  ylab(paste0(&quot;PC9: &quot;,percentVarbatch[9],&quot;% variance&quot;)) +  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = &#39;grey50&#39;)+ theme_bw()</code></pre>
+<p>The plot shows the relationship between <strong>PC1 and PC2</strong> colored by <strong>Pheno</strong> variable, with the point size indicating the <strong>Treatment</strong> variable.</p>
+<p>Four distinct groups were formed based on their treatment: the CC group (untreated) is located in the right corner, the TG group (treated with TGF-b) is located at the bottom, the TN group (treated with TNF-ɑ) is located in the right corner, and the TT group (treated with both TGF-b and TNF-ɑ) is located at the top. These groups were differentiated based on PC1, which accounted for 19% of the variance. <img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/PCA_Pheno_Treatment.jpeg" /><br>#### A series of bar plots (one for each principal component)</p>
+<p>Each bar plot represents the loadings of all samples on a given principal component.</p>
+<pre><code>#the resulting vector coul will contain 12 colors from the &quot;Set3&quot; palette.library(RColorBrewer)coul &lt;- brewer.pal(12, &quot;Set3&quot;)#generates colors for a plot based on the batch variablecolors=pcabatchR$Batchallbatches&lt;-unique(pcabatchR$Batch)for (i in 1:38){  colors[pcabatchR$Batch==allbatches[i]]&lt;-coul[i%%12+1]}thinlines=c(seq(4,72,8),75,seq(83,151,8))thicklines=c(seq(8,72,8),79,seq(87,151,8))#first half of the barplot would be the non-fibrotic group and the second part would be the fibrotic group#the order would be CC, TG, TN, TTsamplesorder=c(4,1,3,2,8,5,7,6,28,25,27,26,32,29,31,30,36,33,35,34,40,37,39,38,52,49,51,50,55,53,55,54,68,65,67,66,72,69,71,70,76,73,75,74,80,77,79,78,84,81,83,82,88,85,87,86,116,113,115,114,120,117,119,118,139,136,138,137,143,140,142,141,12,9,11,10,16,13,15,14,20,17,19,18,24,21,23,22,44,41,43,42,48,45,47,46,60,57,59,58,64,61,63,62,92,89,91,90,96,93,95,94,100,97,99,98,104,101,103,102,108,105,107,106,112,109,111,110,124,121,123,122,128,125,127,126,132,129,131,130,135,133,134,147,144,146,145,151,148,150,149)#create 38 barplots and saving each of them as a PNG filefor (i in 1:38) {  filename = paste(&quot;PC_&quot;,i,&quot;.png&quot;, sep = &quot;&quot;)  png(filename)  barplot(pcabatchALL[samplesorder,i],col=colors[samplesorder],las=2,xaxt=&#39;n&#39;,space=0)  for (i in 1:length(thinlines)) {    abline(v = thinlines[i], col = &quot;black&quot;,lty = 3)  }  for (i in 1:length(thicklines)) {    abline(v = thicklines[i], col = &quot;black&quot;,lty = 1)  }  abline(v = 72, col = &quot;red&quot;,lty = 1)  dev.off()}write.csv(aloadrelativebatch,file=&quot;aloadrelativeMask_batchmodel_filtered.csv&quot;)write.csv(pcabatch$x,file=&quot;pca_batchmodel_x.csv&quot;)</code></pre>
+<p>A red line is drawn at position 72 in order to separate the non-fibrotic group and the fibrotic group. Within each patient, the treatment order would be CC, TG, TN, TT. The color of each bar represents the batch of the sample, with a unique color assigned to each batch. The vertical lines on the plot indicate the position of specific loadings, with thin and thick lines indicating different positions.</p>
+<p>For example, this is PC_1.png. From this plot, you can see that the highest sxpression is closely related with TNF-ɑ. As for the first patient, compaire to the contorl(untreated), the TNF-ɑ group is much higher and the TT group (TGF-b+TNF-ɑ) is not that high.</p>
+<p><img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/PCs/PC_1.png" /></p>
+<p><br></p>
+<h4 id="pca-rank-matrix">PCA rank matrix</h4>
+<p>Take csv files and converts it to the txt files with the second column onwards. It does this by first removing the first row using awk, replacing multiple commas with tabs using tr, and removing the first column using cut.</p>
+<pre><code>
+#In terminal
+cat aloadrelativeMask_batchmodel_filtered.csv | awk &#39;NR&gt;1{print}&#39; | tr -s &quot;,&quot; &quot;\t&quot; | cut -f 2- &gt; aloadrelativeMask_batchmodel_filtered.clean.txt
+cat pca_batchmodel_x.csv | awk &#39;NR&gt;1{print}&#39; | tr -s &quot;,&quot; &quot;\t&quot; | cut -f 2- &gt; pca_batchmodel_x.clean.txt
+</code></pre>
+<p>Read in the preprocessed data files created in the previous steps and store them in variables pcabatch_samples and pca_loadings, respectively.</p>
+<pre><code>
+#In Matlab
+pcabatch_samples = textread(&#39;pca_batchmodel_x.clean.txt&#39;,&#39;&#39;);
+pca_loadings = textread(&#39;aloadrelativeMask_batchmodel_filtered.clean.txt&#39;,&#39;&#39;);
+</code></pre>
+<p>Sort the three columns of pca_loadings in descending order and store the sorted values in variables x1, x2, and x3, and the corresponding indices in y1, y2, and y3.</p>
+<pre><code>
+%%%%%%%% PCA SUPP
+
+%x = pca_loading number, y = its index
+
+[x1 y1]=sort(pca_loadings(:,1),&#39;descend&#39;);
+[x2 y2]=sort(pca_loadings(:,2),&#39;descend&#39;);
+[x3 y3]=sort(pca_loadings(:,3),&#39;descend&#39;);
+</code></pre>
+<p>Determine the rank of each row in the original order for the first three principal components and store the ranks in a matrix pcarankmatrix.</p>
+<pre><code>
+[x y z]=intersect(1:length(y1),y1);
+pcarankmatrix(:,1)=z;
+[x y z]=intersect(1:length(y2),y2);
+pcarankmatrix(:,2)=z;
+[x y z]=intersect(1:length(y3),y3);
+pcarankmatrix(:,3)=z;
+
+%contains the rank of each feature in the original order for the first three principal components
+
+dlmwrite(&#39;pcarankmatrix.txt&#39;, pcarankmatrix,&#39;delimiter&#39;,&#39;\t&#39;)
+</code></pre>
+<p>To efficiently manage our data with a single glance, I have organized it into an Excel spreadsheet using a combination of command line, Excel, and R.</p>
+<p><br></p>
+<h4 id="spreadsheet">Spreadsheet</h4>
+<p>The first sheet (patients) built on excel contains patients order, patients id, phenotypes, and sex. You can visit the sheet by clicking <a href="/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx">here</a>.</p>
+<p><img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/spreadsheet_patient.png" /></p>
+<p><br></p>
+<p>The second sheet (allbiotypes_percents) includes the names and percentages of all biotypes, along with their respective minimum, maximum, and average values, providing us with a comprehensive overview. You can visit the sheet by clicking <a href="/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx">here</a>.</p>
+<pre><code>
+#In terminal
+paste allbiotypes allbiotypescountspercents &gt; combine_allbiotypes_percents.txt
+
+#In R#allbiotypes_percentssheet2_1 &lt;- list(&quot;Biotypes&quot;)sheet2_2 &lt;- sampleKeyTNFATGFBcombined_sheet2 &lt;- c(sheet2_1, sheet2_2)combined_spreadsheet2 &lt;- as.matrix(read.table(&quot;combine_allbiotypes_percents.txt&quot;))colnames(combined_spreadsheet2) &lt;- combined_sheet2write.table(combined_spreadsheet2,file=&quot;combined_spreadsheet2.txt&quot;, sep = &quot;\t&quot;, row.names = FALSE)
+#add their respective minimum, maximum, and average values on Excel
+</code></pre>
+<p><img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/spreadsheet_allbiotypes_percents.png" /></p>
+<p><br></p>
+<p>The third sheet is the main sheet that includes Genename, Geneid, Mapp, PC1, PC2, PC3, and patient’s TPM values.</p>
+<pre><code>
+#In terminal
+
+paste Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_Geneid_GMask.txt Gencode_33_Selected_MappSS_GMask.txt pcarankmatrix.txt  &gt; combine_test.txt
+#In R
+
+#spreadsheet
+sheet3_1 &lt;- list(&quot;Genename&quot;,&quot;Genename&quot;,&quot;Geneid&quot;,&quot;Mapp&quot;,&quot;PC1&quot;,&quot;PC2&quot;,&quot;PC3&quot;)sheet3_2&lt;- sampleKeyTNFATGFBcombined_headers &lt;- c(sheet3_1, sheet3_2)combined_spreadsheet &lt;- as.matrix(read.table(&quot;combine_test.txt&quot;))colnames(combined_spreadsheet) &lt;- combined_headerscombined_spreadsheet &lt;- combined_spreadsheet[order(combined_spreadsheet[,1]),] #sort by the first columnwrite.table(combined_spreadsheet,file=&quot;combined_spreadsheet.txt&quot;, sep = &quot;\t&quot;, row.names = FALSE)</code></pre>
+<p>You can sort this sheet with PC1, PC2, and so on to see the corelation between the treatment and the expression level in each gene.</p>
+<p><img src="/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/spreadsheet.png" /></p>
+<p><br></p>
+<h2 id="future-works">Future works</h2>
+<p><br></p>
+<h2 id="references">References</h2>
+<ol type="1">
+<li>Dovrolis, N., et al., Co-expression of fibrotic genes in inflammatory bowel disease; A localized event? Front Immunol, 2022. 13: p. 1058237.</li>
+<li>Edgar, R.D., et al., Culture-Associated DNA Methylation Changes Impact on Cellular Function of Human Intestinal Organoids. Cell Mol Gastroenterol Hepatol, 2022. 14(6): p. 1295-1310.</li>
+<li>Ihara, S., Y. Hirata, and K. Koike, TGF-beta in inflammatory bowel disease: a key regulator of immune cells, epithelium, and the intestinal microbiota. J Gastroenterol, 2017. 52(7): p. 777-787.</li>
+<li>Lindeboom, R.G., et al., Integrative multi-omics analysis of intestinal organoid differentiation. Mol Syst Biol, 2018. 14(6): p. e8227.</li>
+<li>Ma, Q., et al., OrganoidDB: a comprehensive organoid database for the multi-perspective exploration of bulk and single-cell transcriptomic profiles of organoids. Nucleic Acids Res, 2023. 51(D1): p. D1086-D1093.</li>
+<li>Wang, Q., et al., Applications of human organoids in the personalized treatment for digestive diseases. Signal Transduct Target Ther, 2022. 7(1): p. 336.</li>
+<li>Corsini, N.S. and J.A. Knoblich, Human organoids: New strategies and methods for analyzing human development and disease. Cell, 2022. 185(15): p. 2756-2769.</li>
+<li>Ingber, D.E., Human organs-on-chips for disease modelling, drug development and personalized medicine. Nat Rev Genet, 2022. 23(8): p. 467-491.</li>
+<li>Brooks, I.R., et al., Functional genomics and the future of iPSCs in disease modeling. Stem Cell Reports, 2022. 17(5): p. 1033-1047.</li>
+<li>D’Alessio, S., et al., Revisiting fibrosis in inflammatory bowel disease: the gut thickens. Nat Rev Gastroenterol Hepatol, 2022. 19(3): p. 169-184.</li>
+<li>Carcamo-Orive, I., et al., Analysis of Transcriptional Variability in a Large Human iPSC Library Reveals Genetic and Non-genetic Determinants of Heterogeneity. Cell Stem Cell, 2017. 20(4): p. 518-532 e9.</li>
+<li>Gleeson, J.P., et al., Development of Physiologically Responsive Human iPSC-Derived Intestinal Epithelium to Study Barrier Dysfunction in IBD. Int J Mol Sci, 2020. 21(4).</li>
+<li>Workman, M.J., et al., Modeling Intestinal Epithelial Response to Interferon-gamma in Induced Pluripotent Stem Cell-Derived Human Intestinal Organoids. Int J Mol Sci, 2020. 22(1).</li>
+</ol>
+<p><br></p>

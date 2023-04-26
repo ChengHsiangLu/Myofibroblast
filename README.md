@@ -49,7 +49,7 @@ iPSCs can be used to study the underlying causes of diseases, test new drugs and
 
 ## Aim 
 
-In this project, we will be analyzing RNA-seq data from 19 samples, comprising of 10 samples with fibrotic complications and 9 non-fibrotic samples. Each sample has undergone two runs and 4 different treatments(untreated, TGF-b, TNF-ɑ, and  TGF-b+TNF-ɑ), resulting in a total of 151 samples(1 library failed). We used induced pluripotent stem cells (iPSC) to differentiate into myofibroblasts and stimulated the system with different signals to observe its development. The objective is to investigate the effect of four different treatments: untreated, TGF-B, TNF-A, and TGF-B+TNF-A on the development of the system. In the end, we will perform differential expression analysis to identify the genes that are differentially expressed in fibrotic and non-fibrotic samples under 4 treatments. 
+In this project, we will be analyzing RNA-seq data from 19 samples, comprising of 10 samples with fibrotic complications and 9 non-fibrotic samples. Each sample has undergone two runs and 4 different treatments(untreated, TGFb, TNFa, and  TGF-b+TNF-a), resulting in a total of 151 samples(1 library failed). We used induced pluripotent stem cells (iPSC) to differentiate into myofibroblasts and stimulated the system with different signals to observe its development. The objective is to investigate the effect of four different treatments: untreated, TGF-B, TNF-A, and TGF-B+TNF-A on the development of the system. In the end, we will perform differential expression analysis to identify the genes that are differentially expressed in fibrotic and non-fibrotic samples under 4 treatments. 
 
 <br> 
 
@@ -96,7 +96,7 @@ done
 ``` 
 This is what each fasta-formatted file would look like:
 
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/fasta_formatted.png)
+![](/Pics/fasta_formatted.png)
 
 <br>
 
@@ -171,7 +171,7 @@ grep "|" 008iP22TGFbM_S71GTFpass1/008iP22TGFbM_S71GTFpass1Log.final.out | cut -f
 
 The first column from the mapping statistics file.
 
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/mapping_statistics.jpg)
+![](/Pics/mapping_statistics.jpg)
 
 <br>
 
@@ -208,7 +208,7 @@ paste temp2.txt tempprev.txt > mappingstatsFirstpass.txt
 
 The mappingstatsFirstpass.txt would look like this:
 
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/mappingstatsFirstpass.jpg)
+![](/Pics/mappingstatsFirstpass.jpg)
 
 <br> 
 
@@ -265,7 +265,7 @@ ls *.sense.tab | sed 's/.sense.tab//g' | tr -s " " "\n" | sed 's/_1//g' > RBarre
 Make count tables for sense, anti-sense, nostrand, ambiguous, and nofeature reads.
 
 ```  
-
+****
 # combine all sense counts into RBarretTNFATGFB_sense.ALL.cnt 
 paste *.sense.tab > RBarretTNFATGFB_sense.ALL.cnt   
 
@@ -369,7 +369,7 @@ plot(thistree, 'ORIENTATION', 'top')
 
 ```
 
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/first_dendrogram.jpg)
+![](/Pics/first_dendrogram.jpg)
 
 <br>
 
@@ -407,7 +407,8 @@ writetable(cell2table(allbiotypes),'allbiotypes.txt','WriteVariableNames',0)
 ```
 
 Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescountspercents.txt", and calculate the minimum, maximum, and average values for each biotype. You can access my completed spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx). Notably, protein_coding genes exhibit an average of 98.65% among the various biotypes, consistent with my expectations.
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/spreadsheet_allbiotypescountspercents.jpg)
+
+![](/Pics/spreadsheet_allbiotypescountspercents.jpg)
 
 <br>
 
@@ -495,6 +496,7 @@ end
 
 #### Dendrogram with only protein coding genes
 
+
 Perform hierarchical clustering on a subset of the gene expression data stored in the variable RBarretTNFATGFBTPM_GMask with only protein coding genes.
 
 ```
@@ -513,7 +515,7 @@ plot(thistree,'ORIENTATION','top')
 
 Basically, the plot is clustered by their treatments.
 
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/Second_dendrogram.jpg)
+![](/Pics/Second_dendrogram.jpg)
 
 <br>
 
@@ -590,7 +592,7 @@ The sampleTableTNFATGFB contains Treatment, Line, Pheno, Sex, Pass, Factor, and 
 sampleTableTNFATGFB = read.table("samplekeys_Sam.tab")rownames(sampleTableTNFATGFB)<-sampleKeyTNFATGFBcolnames(sampleTableTNFATGFB)<- c("Treatment","Line","Pheno","Sex","Pass")sampleTableTNFATGFB$Factor <- paste(sampleTableTNFATGFB$Treatment,sampleTableTNFATGFB$Pheno,sep="_")#concatenating the "Line" and "Pass" columns with an underscore separatorsampleTableTNFATGFB$Batch <- paste(sampleTableTNFATGFB$Line,sampleTableTNFATGFB$Pass,sep="_")colnames(RBarretTNFATGFBCntGMask) <- sampleKeyTNFATGFBwrite.table(sampleTableTNFATGFB,file="sampleTableTNFATGFB.txt", sep = "\t", col.names = FALSE)
 ```
 
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/sampleTableTNFATGFB.png)
+![](/Pics/sampleTableTNFATGFB.png)
 
 <br>
 
@@ -630,8 +632,9 @@ Finally, the varianceStabilizingTransformation function is used to perform varia
 
 The plot shows the relationship between **PC1 and PC2** colored by **Pheno** variable, with the point size indicating the **Treatment** variable.
 
-Four distinct groups were formed based on their treatment: the CC group (untreated) is located in the right corner, the TG group (treated with TGF-b) is located at the bottom, the TN group (treated with TNF-ɑ) is located in the right corner, and the TT group (treated with both TGF-b and TNF-ɑ) is located at the top. These groups were differentiated based on PC1, which accounted for 19% of the variance.
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/PCA_Pheno_Treatment.jpeg)<br>#### A series of bar plots (one for each principal component)
+Four distinct groups were formed based on their treatment: the CC group (untreated) is located in the right corner, the TG group (treated with TGF-b) is located at the bottom, the TN group (treated with TNF-a) is located in the right corner, and the TT group (treated with both TGF-b and TNF-a) is located at the top. These groups were differentiated based on PC1, which accounted for 19% of the variance.
+![](/Pics/PCA_Pheno_Treatment.jpeg)<br>
+#### A series of bar plots (one for each principal component)
 
 Each bar plot represents the loadings of all samples on a given principal component. 
 ```
@@ -640,9 +643,9 @@ Each bar plot represents the loadings of all samples on a given principal compon
 
 A red line is drawn at position 72 in order to separate the non-fibrotic group and the fibrotic group. Within each patient, the treatment order would be CC, TG, TN, TT. The color of each bar represents the batch of the sample, with a unique color assigned to each batch. The vertical lines on the plot indicate the position of specific loadings, with thin and thick lines indicating different positions. 
 
-For example, this is PC_1.png. From this plot, you can see that the highest sxpression is closely related with TNF-ɑ. As for the first patient, compaire to the contorl(untreated), the TNF-ɑ group is much higher and the TT group (TGF-b+TNF-ɑ) is not that high.
+For example, this is PC_1.png. From this plot, you can see that the highest sxpression is closely related with TNF-a. As for the first patient, compaire to the contorl(untreated), the TNF-a group is much higher and the TT group (TGF-b+TNF-a) is not that high.
 
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/PCs/PC_1.png)
+![](/Pics/PCs/PC_1.png)
 
 <br>
 
@@ -707,7 +710,7 @@ To efficiently manage our data with a single glance, I have organized it into an
 
 The first sheet (patients) built on excel contains patients order, patients id, phenotypes, and sex. You can visit the sheet by clicking [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx).
 
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/spreadsheet_patient.png)
+![](/Pics/spreadsheet_patient.png)
 
 <br>
 
@@ -722,7 +725,7 @@ paste allbiotypes allbiotypescountspercents > combine_allbiotypes_percents.txt
 #add their respective minimum, maximum, and average values on Excel
 
 ```
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/spreadsheet_allbiotypes_percents.png)
+![](/Pics/spreadsheet_allbiotypes_percents.png)
 
 <br>
 
@@ -741,7 +744,7 @@ paste Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_Genename_GMask.
 
 You can sort this sheet with PC1, PC2, and so on to see the corelation between the treatment and the expression level in each gene.
 
-![](/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/GitHub/Pics/spreadsheet.png)
+![](/Pics/spreadsheet.png)
 
  <br> 
 
