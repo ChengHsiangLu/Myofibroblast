@@ -293,7 +293,7 @@ cat *nofeature.tab > RBarretTNFATGFB_nofeature.cnt
 
 ``` 
 
-Next, I am going to use "RBarretTNFATGFB_antisense.ALL.cnt" file for the further analysis.
+Next, I am going to use "RBarretTNFATGFB_antisense.ALL.cnt" file for the further analysis, as this matrix contains the counts matching the strand-specificity of the RNA-Seq libraries generated in this study.
 
 <br> 
 
@@ -331,7 +331,7 @@ Gencode_33_Selected_Genename=textread('mappability and R code/gencode.v33.annota
 #### Compile counts
 
 First, initialize a new variable called RBarretTNFATGFBTPM with the same count data as RBarretTNFATGFBCnt.
-Then, iterates over each gene in the count data matrix. For each gene, the corresponding row in RBarretTNFATGFBTPM is updated by dividing the count data by the read counts from the "Gencode\_33\_Selected\_MappSS", multiplying by 1000, and storing the result in RBarretTNFATGFBTPM.
+Then, iterates over each gene in the count data matrix. For each gene, the corresponding row in RBarretTNFATGFBTPM is updated by dividing the count data by the gene effective length from the "Gencode\_33\_Selected\_MappSS", multiplying by 1000, and storing the result in RBarretTNFATGFBTPM.
 
 Finally, iterates over each sample in the TPM data matrix. For each sample, the corresponding column in RBarretTNFATGFBTPM is updated by dividing the values in the column by the sum of the values in the column, multiplying by 1,000,000, and storing the result in RBarretTNFATGFBTPM. This step **normalizes the TPM values** across samples and scales the resulting values to TPM.
 
@@ -355,7 +355,7 @@ end
 
 #### Make the first dendrogram
 
-Make a dendrogram to visualize the relationships among samples in the RBarretTNFATGFB dataset based on their gene expression profiles. 
+Make a dendrogram to visualize the relationships among samples in the RBarretTNFATGFB dataset based on their gene expression profiles. To downgrade the effect of potential expression outliers in the dendrogram and compute a more robust sample clustering:
 
 1. I generates a random selection of 1,000 genes from the TPM data matrix.
 2. Calculates the pairwise distances between the selected genes.
