@@ -49,7 +49,17 @@ iPSCs can be differentiated into multiple cell and tissue types, and can therefo
 
 ## Aim 
 
-In this project, we will be analyzing RNA-seq data from 19 samples, comprising of 10 samples with fibrotic complications and 9 non-fibrotic samples. Each sample has undergone two runs and 4 different treatments(untreated, TGFb, TNFa, and  TGF-b+TNF-a), resulting in a total of 151 samples(1 library failed). We used induced pluripotent stem cells (iPSC) to differentiate into myofibroblasts and stimulated the system with different signals to observe its development. The objective is to investigate the effect of four different treatments: untreated, TGF-B, TNF-A, and TGF-B+TNF-A on the development of the system. In the end, we will perform differential expression analysis to identify the genes that are differentially expressed in fibrotic and non-fibrotic samples under 4 treatments. 
+In this project, we will be analyzing RNA-seq data from 19 iPSC lines that were differentiated into gut mesenchymal organoids. This panel comprises 10 iPSC lines derived from Crohn's disease patients that suffered fibrotic complications, and 9 lines from patients with non-fibrotic disease. Each iPSC line was differentiated into mesenchymal organoids in two independent replicates, and each was subjected to 4 different treatments:
+
+* untreated 
+* TGFb (a pro-fibrotic cytokine) 
+* TNFa (a pro-inflammatory cytokine) 
+* and the combination of TGF-b+TNF-a
+
+The final RNA-Seq dataset comprised a total of 151 samples(1 library failed). The objective is to 
+
+* investigate if the effect of the four different treatments in iPSC-derived organoids recapitulate the expected responses observed in-vivo
+* perform differential expression analysis to identify genes that show differential responses between fibrotic and non-fibrotic patients.
 
 <br> 
 
