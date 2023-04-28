@@ -43,7 +43,7 @@ Induced pluripotent stem cells (iPSCs) are a type of stem cell that are generate
 iPSCs offer several advantages as they can be generated from the patient's own cells, avoiding issues with immune rejection, ethical concerns and the need for embryos. 
 
 
-iPSCs can be used to study the underlying causes of diseases, test new drugs and therapies, and potentially generate replacement tissues or organs for transplantation.
+iPSCs can be differentiated into multiple cell and tissue types, and can therefore be used to study the underlying causes of diseases, test new drugs and therapies, and potentially generate replacement tissues or organs for transplantation. As iPSCs possess the same genetic background as the patient they are derived from, they are considered an instrumental tool in the field of personalized and precision medicine. 
 
 <br> 
 
@@ -557,8 +557,28 @@ First, install packages BiocManager, BiocLite, IHW, DESeq2, and ggplot2. Then, r
 
 ```
 
-setwd("/Users/LuC/Desktop/Cedars-Sinai/PROJECTS/IBD_RNASeq/RBARRETTNFATGFB/")#setwd("/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/IBD_RNASeq/RBARRETTNFATGFB/")if (!requireNamespace("BiocManager", quietly = TRUE))  install.packages("BiocManager")#BiocManager::install("BiocLite")#BiocManager::install("IHW")#BiocManager::install("DESeq2")#install.packages("ggplot2")library(DESeq2)library(IHW)library(ggplot2)library(ggrepel)RBarretTNFATGFBCntGMask = as.matrix(read.table("RBarretTNFATGFBCnt_GMask.txt"))sampleNameTNFATGFB = as.matrix(read.table("RBarretTNFATGFBsamples.txt"))sampleKeyTNFATGFB = as.matrix(read.table("samplekeys_Sam.txt"))genenames = as.matrix(read.table("Gencode_33_Selected_Genename_GMask.txt"))
-```
+setwd("/Users/LuC/Desktop/Cedars-Sinai/PROJECTS/IBD_RNASeq/RBARRETTNFATGFB/")
+#setwd("/Users/samuellu/Desktop/Cedars-Sinai/PROJECTS/IBD_RNASeq/RBARRETTNFATGFB/")
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+#BiocManager::install("BiocLite")
+#BiocManager::install("IHW")
+#BiocManager::install("DESeq2")
+#install.packages("ggplot2")
+
+library(DESeq2)
+library(IHW)
+library(ggplot2)
+library(ggrepel)
+
+RBarretTNFATGFBCntGMask = as.matrix(read.table("RBarretTNFATGFBCnt_GMask.txt"))
+sampleNameTNFATGFB = as.matrix(read.table("RBarretTNFATGFBsamples.txt"))
+sampleKeyTNFATGFB = as.matrix(read.table("samplekeys_Sam.txt"))
+genenames = as.matrix(read.table("Gencode_33_Selected_Genename_GMask.txt"))
+
+```
 
 <br>
 
@@ -587,8 +607,17 @@ done
 The sampleTableTNFATGFB contains Treatment, Line, Pheno, Sex, Pass, Factor, and Batch.
 
 ```
-sampleTableTNFATGFB = read.table("samplekeys_Sam.tab")rownames(sampleTableTNFATGFB)<-sampleKeyTNFATGFBcolnames(sampleTableTNFATGFB)<- c("Treatment","Line","Pheno","Sex","Pass")sampleTableTNFATGFB$Factor <- paste(sampleTableTNFATGFB$Treatment,sampleTableTNFATGFB$Pheno,sep="_")#concatenating the "Line" and "Pass" columns with an underscore separatorsampleTableTNFATGFB$Batch <- paste(sampleTableTNFATGFB$Line,sampleTableTNFATGFB$Pass,sep="_")colnames(RBarretTNFATGFBCntGMask) <- sampleKeyTNFATGFBwrite.table(sampleTableTNFATGFB,file="sampleTableTNFATGFB.txt", sep = "\t", col.names = FALSE)
-```
+
+sampleTableTNFATGFB = read.table("samplekeys_Sam.tab")
+rownames(sampleTableTNFATGFB)<-sampleKeyTNFATGFB
+colnames(sampleTableTNFATGFB)<- c("Treatment","Line","Pheno","Sex","Pass")
+sampleTableTNFATGFB$Factor <- paste(sampleTableTNFATGFB$Treatment,sampleTableTNFATGFB$Pheno,sep="_")
+#concatenating the "Line" and "Pass" columns with an underscore separator
+sampleTableTNFATGFB$Batch <- paste(sampleTableTNFATGFB$Line,sampleTableTNFATGFB$Pass,sep="_")
+colnames(RBarretTNFATGFBCntGMask) <- sampleKeyTNFATGFB
+write.table(sampleTableTNFATGFB,file="sampleTableTNFATGFB.txt", sep = "\t", col.names = FALSE)
+
+```
 
 ![](/Pics/sampleTableTNFATGFB.png)
 
@@ -603,41 +632,127 @@ Next, the DESeq function is used to estimate size factors and dispersion values 
 Finally, the varianceStabilizingTransformation function is used to perform variance stabilizing transformation on the DESeqDataSet objects. This transformation is important for reducing the effect of noise and heteroscedasticity in the data, making it more suitable for downstream analyses such as differential gene expression analysis.
 
 ```
-RBarretTNFATGFBCntGMaskBatch <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= sampleTableTNFATGFB,design= ~Batch)RBarretTNFATGFBCntGMaskBatch <- DESeq(RBarretTNFATGFBCntGMaskBatch)RBarretTNFATGFBCntGMaskFactor <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= sampleTableTNFATGFB,design= ~Factor)RBarretTNFATGFBCntGMaskFactor <- DESeq(RBarretTNFATGFBCntGMaskFactor)RBarretTNFATGFBCntGMaskBatch_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskBatch,blind=FALSE)RBarretTNFATGFBCntGMaskFactor_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskFactor,blind=FALSE)
-```
+
+RBarretTNFATGFBCntGMaskBatch <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= sampleTableTNFATGFB,design= ~Batch)
+RBarretTNFATGFBCntGMaskBatch <- DESeq(RBarretTNFATGFBCntGMaskBatch)
+
+RBarretTNFATGFBCntGMaskFactor <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= sampleTableTNFATGFB,design= ~Factor)
+RBarretTNFATGFBCntGMaskFactor <- DESeq(RBarretTNFATGFBCntGMaskFactor)
+
+RBarretTNFATGFBCntGMaskBatch_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskBatch,blind=FALSE)
+RBarretTNFATGFBCntGMaskFactor_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskFactor,blind=FALSE)
+
+```
 
 <br>
 
 #### PCA
 
 ```
-#perform principal component analysis (PCA) on the variance-stabilized counts data pcabatch <- prcomp(t(assay(RBarretTNFATGFBCntGMaskBatch_vsd)))
-#give the percentage of variance explained by each principal componentpercentVarbatch <- round(100*pcabatch$sdev^2/sum(pcabatch$sdev^2))
-#pcabatch$rotation is a matrix containing the loadings of the principal components.aloadbatch <- abs(pcabatch$rotation)
 
-#normalize the loadings in aloadbatch so that each column (i.e., PC) sums to 1. aloadrelativebatch <- sweep(aloadbatch, 2, colSums(aloadbatch), "/")
-#pcabatch$x is a matrix containing each sample's coordinate on each principal componentpcabatchALL <- pcabatch$xpcabatchR<- cbind(pcabatchALL,sampleTableTNFATGFB)
-#center the PC1 scores in pcabatchR to have a mean of 0. This is done so that the PC1 variable can be used as a covariate in the subsequent differential expression analysis.pcabatchR$PC1 <- scale(pcabatchR$PC1, center = TRUE)RBarretTNFATGFBCntGMaskPC1 <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= pcabatchR,design= ~PC1)RBarretTNFATGFBCntGMaskPC1 <- DESeq(RBarretTNFATGFBCntGMaskPC1)RBarretTNFATGFBCntGMaskPC1_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskPC1,blind=FALSE)
-```
+#perform principal component analysis (PCA) on the variance-stabilized counts data 
+pcabatch <- prcomp(t(assay(RBarretTNFATGFBCntGMaskBatch_vsd)))
+
+#give the percentage of variance explained by each principal component
+percentVarbatch <- round(100*pcabatch$sdev^2/sum(pcabatch$sdev^2))
+
+#pcabatch$rotation is a matrix containing the loadings of the principal components.
+aloadbatch <- abs(pcabatch$rotation)
+
+#normalize the loadings in aloadbatch so that each column (i.e., PC) sums to 1. 
+aloadrelativebatch <- sweep(aloadbatch, 2, colSums(aloadbatch), "/")
+
+#pcabatch$x is a matrix containing each sample's coordinate on each principal component
+pcabatchALL <- pcabatch$x
+pcabatchR<- cbind(pcabatchALL,sampleTableTNFATGFB)
+
+#center the PC1 scores in pcabatchR to have a mean of 0. This is done so that the PC1 variable can be used as a covariate in the subsequent differential expression analysis.
+pcabatchR$PC1 <- scale(pcabatchR$PC1, center = TRUE)
+
+
+RBarretTNFATGFBCntGMaskPC1 <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= pcabatchR,design= ~PC1)
+RBarretTNFATGFBCntGMaskPC1 <- DESeq(RBarretTNFATGFBCntGMaskPC1)
+
+RBarretTNFATGFBCntGMaskPC1_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskPC1,blind=FALSE)
+
+```
 
 <br>
 
 #### PCA plots
 
 ```
-ggplot(pcabatchR, aes(PC1, PC2, color= Pheno)) +  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Pheno),color="black",alpha=0.2) +  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) +  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = 'grey50')+ theme_bw()ggplot(pcabatchR, aes(PC1, PC2, color= Sex)) +  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Treatment),color="black",alpha=0.2) +  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) + theme_bw()ggplot(pcabatchR, aes(PC2, PC9, color= Pheno)) +  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Treatment),color="black",alpha=0.2) +  xlab(paste0("PC2: ",percentVarbatch[2],"% variance")) +  ylab(paste0("PC9: ",percentVarbatch[9],"% variance")) +  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = 'grey50')+ theme_bw()
-```
+
+ggplot(pcabatchR, aes(PC1, PC2, color= Pheno)) +
+  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Pheno),color="black",alpha=0.2) +
+  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) +
+  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = 'grey50')+ theme_bw()
+
+ggplot(pcabatchR, aes(PC1, PC2, color= Sex)) +
+  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Treatment),color="black",alpha=0.2) +
+  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) + theme_bw()
+
+ggplot(pcabatchR, aes(PC2, PC9, color= Pheno)) +
+  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Treatment),color="black",alpha=0.2) +
+  xlab(paste0("PC2: ",percentVarbatch[2],"% variance")) +
+  ylab(paste0("PC9: ",percentVarbatch[9],"% variance")) +
+  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = 'grey50')+ theme_bw()
+
+```
 
 The plot shows the relationship between **PC1 and PC2** colored by **Pheno** variable, with the point size indicating the **Treatment** variable.
 
 Four distinct groups were formed based on their treatment: the CC group (untreated) is located in the right corner, the TG group (treated with TGF-b) is located at the bottom, the TN group (treated with TNF-a) is located in the right corner, and the TT group (treated with both TGF-b and TNF-a) is located at the top. These groups were differentiated based on PC1, which accounted for 19% of the variance.
-![](/Pics/PCA_Pheno_Treatment.png)<br>
-#### A series of bar plots (one for each principal component)
+
+![](/Pics/PCA_Pheno_Treatment.png)
+
+<br>
+
+
+#### A series of bar plots (one for each principal component)
 
 Each bar plot represents the loadings of all samples on a given principal component. 
-```
-#the resulting vector coul will contain 12 colors from the "Set3" palette.library(RColorBrewer)coul <- brewer.pal(12, "Set3")#generates colors for a plot based on the batch variablecolors=pcabatchR$Batchallbatches<-unique(pcabatchR$Batch)for (i in 1:38){  colors[pcabatchR$Batch==allbatches[i]]<-coul[i%%12+1]}thinlines=c(seq(4,72,8),75,seq(83,151,8))thicklines=c(seq(8,72,8),79,seq(87,151,8))#first half of the barplot would be the non-fibrotic group and the second part would be the fibrotic group#the order would be CC, TG, TN, TTsamplesorder=c(4,1,3,2,8,5,7,6,28,25,27,26,32,29,31,30,36,33,35,34,40,37,39,38,52,49,51,50,55,53,55,54,68,65,67,66,72,69,71,70,76,73,75,74,80,77,79,78,84,81,83,82,88,85,87,86,116,113,115,114,120,117,119,118,139,136,138,137,143,140,142,141,12,9,11,10,16,13,15,14,20,17,19,18,24,21,23,22,44,41,43,42,48,45,47,46,60,57,59,58,64,61,63,62,92,89,91,90,96,93,95,94,100,97,99,98,104,101,103,102,108,105,107,106,112,109,111,110,124,121,123,122,128,125,127,126,132,129,131,130,135,133,134,147,144,146,145,151,148,150,149)#create 38 barplots and saving each of them as a PNG filefor (i in 1:38) {  filename = paste("PC_",i,".png", sep = "")  png(filename)  barplot(pcabatchALL[samplesorder,i],col=colors[samplesorder],las=2,xaxt='n',space=0)  for (i in 1:length(thinlines)) {    abline(v = thinlines[i], col = "black",lty = 3)  }  for (i in 1:length(thicklines)) {    abline(v = thicklines[i], col = "black",lty = 1)  }  abline(v = 72, col = "red",lty = 1)  dev.off()}write.csv(aloadrelativebatch,file="aloadrelativeMask_batchmodel_filtered.csv")write.csv(pcabatch$x,file="pca_batchmodel_x.csv")
-```
+
+```
+
+#the resulting vector coul will contain 12 colors from the "Set3" palette.
+library(RColorBrewer)
+coul <- brewer.pal(12, "Set3")
+#generates colors for a plot based on the batch variable
+colors=pcabatchR$Batch
+allbatches<-unique(pcabatchR$Batch)
+for (i in 1:38){
+  colors[pcabatchR$Batch==allbatches[i]]<-coul[i%%12+1]
+}
+
+thinlines=c(seq(4,72,8),75,seq(83,151,8))
+thicklines=c(seq(8,72,8),79,seq(87,151,8))
+
+#first half of the barplot would be the non-fibrotic group and the second part would be the fibrotic group
+#the order would be CC, TG, TN, TT
+samplesorder=c(4,1,3,2,8,5,7,6,28,25,27,26,32,29,31,30,36,33,35,34,40,37,39,38,52,49,51,50,55,53,55,54,68,65,67,66,72,69,71,70,76,73,75,74,80,77,79,78,84,81,83,82,88,85,87,86,116,113,115,114,120,117,119,118,139,136,138,137,143,140,142,141,12,9,11,10,16,13,15,14,20,17,19,18,24,21,23,22,44,41,43,42,48,45,47,46,60,57,59,58,64,61,63,62,92,89,91,90,96,93,95,94,100,97,99,98,104,101,103,102,108,105,107,106,112,109,111,110,124,121,123,122,128,125,127,126,132,129,131,130,135,133,134,147,144,146,145,151,148,150,149)
+
+#create 38 barplots and saving each of them as a PNG file
+for (i in 1:38) {
+  filename = paste("PC_",i,".png", sep = "")
+  png(filename)
+  barplot(pcabatchALL[samplesorder,i],col=colors[samplesorder],las=2,xaxt='n',space=0)
+  for (i in 1:length(thinlines)) {
+    abline(v = thinlines[i], col = "black",lty = 3)
+  }
+  for (i in 1:length(thicklines)) {
+    abline(v = thicklines[i], col = "black",lty = 1)
+  }
+  abline(v = 72, col = "red",lty = 1)
+  dev.off()
+}
+
+write.csv(aloadrelativebatch,file="aloadrelativeMask_batchmodel_filtered.csv")
+write.csv(pcabatch$x,file="pca_batchmodel_x.csv")
+
+```
 
 A red line is drawn at position 72 in order to separate the non-fibrotic group and the fibrotic group. Within each patient, the treatment order would be CC, TG, TN, TT. The color of each bar represents the batch of the sample, with a unique color assigned to each batch. The vertical lines on the plot indicate the position of specific loadings, with thin and thick lines indicating different positions. 
 
@@ -719,7 +834,14 @@ The second sheet (allbiotypes_percents) includes the names and percentages of al
 #In terminal
 paste allbiotypes allbiotypescountspercents > combine_allbiotypes_percents.txt
 
-#In R#allbiotypes_percentssheet2_1 <- list("Biotypes")sheet2_2 <- sampleKeyTNFATGFBcombined_sheet2 <- c(sheet2_1, sheet2_2)combined_spreadsheet2 <- as.matrix(read.table("combine_allbiotypes_percents.txt"))colnames(combined_spreadsheet2) <- combined_sheet2write.table(combined_spreadsheet2,file="combined_spreadsheet2.txt", sep = "\t", row.names = FALSE)
+#In R
+#allbiotypes_percents
+sheet2_1 <- list("Biotypes")
+sheet2_2 <- sampleKeyTNFATGFB
+combined_sheet2 <- c(sheet2_1, sheet2_2)
+combined_spreadsheet2 <- as.matrix(read.table("combine_allbiotypes_percents.txt"))
+colnames(combined_spreadsheet2) <- combined_sheet2
+write.table(combined_spreadsheet2,file="combined_spreadsheet2.txt", sep = "\t", row.names = FALSE)
 #add their respective minimum, maximum, and average values on Excel
 
 ```
@@ -734,11 +856,20 @@ The third sheet is the main sheet that includes Genename, Geneid, Mapp, PC1, PC2
 #In terminal
 
 paste Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_Geneid_GMask.txt Gencode_33_Selected_MappSS_GMask.txt pcarankmatrix.txt  > combine_test.txt
-#In R
+
+#In R
 
 #spreadsheet
-sheet3_1 <- list("Genename","Genename","Geneid","Mapp","PC1","PC2","PC3")sheet3_2<- sampleKeyTNFATGFBcombined_headers <- c(sheet3_1, sheet3_2)combined_spreadsheet <- as.matrix(read.table("combine_test.txt"))colnames(combined_spreadsheet) <- combined_headerscombined_spreadsheet <- combined_spreadsheet[order(combined_spreadsheet[,1]),] #sort by the first columnwrite.table(combined_spreadsheet,file="combined_spreadsheet.txt", sep = "\t", row.names = FALSE)
-```
+
+sheet3_1 <- list("Genename","Genename","Geneid","Mapp","PC1","PC2","PC3")
+sheet3_2<- sampleKeyTNFATGFB
+combined_headers <- c(sheet3_1, sheet3_2)
+combined_spreadsheet <- as.matrix(read.table("combine_test.txt"))
+colnames(combined_spreadsheet) <- combined_headers
+combined_spreadsheet <- combined_spreadsheet[order(combined_spreadsheet[,1]),] #sort by the first column
+write.table(combined_spreadsheet,file="combined_spreadsheet.txt", sep = "\t", row.names = FALSE)
+
+```
 
 You can sort this sheet with PC1, PC2, and so on to see the corelation between the treatment and the expression level in each gene.
 
