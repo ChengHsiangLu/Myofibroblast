@@ -312,7 +312,7 @@ RBarretTNFATGFBmeta_seqdepth=round(sum(RBarretTNFATGFBCnt)/1000000);
 
 ```
 
-You can find these annotation in the "mappability and R code" folder.
+The following files contain the annotation and gene effective lenghts (mappabilities) for the human gene annoation used for alignment, and can be found in the  "mappability and R code" folder.
 
 ```
 
