@@ -216,6 +216,8 @@ The mappingstatsFirstpass.txt would look like this:
 
 ![](/Pics/mappingstatsFirstpass.png)
 
+The summary statistics show good rates of unique alignments for all samples.
+
 <br> 
 
 #### Counts 
