@@ -58,7 +58,7 @@ In this project, we will be analyzing RNA-seq data from 19 iPSC lines that were 
 
 The final RNA-Seq dataset comprised a total of 151 samples(1 library failed). The objective is to 
 
-* investigate if the effect of the four different treatments in iPSC-derived organoids recapitulate the expected responses observed in-vivo
+* investigate if the effect of the four different treatments in iPSC-derived organoids recapitulate the expected responses observed in-vivo.
 * perform differential expression analysis to identify genes that show differential responses between fibrotic and non-fibrotic patients.
 
 <br> 
