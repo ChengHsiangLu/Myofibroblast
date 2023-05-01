@@ -106,7 +106,7 @@ done
 ``` 
 This is what each fasta-formatted file would look like:
 
-![](/Pics/fasta_formatted.png)
+![](/Pics/fasta_format.png)
 
 <br>
 
