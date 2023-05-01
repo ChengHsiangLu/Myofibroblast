@@ -798,8 +798,6 @@ Sort the three columns of pca\_loadings in descending order and store the sorted
 
 ```
 
-%%%%%%%% PCA SUPP
-
 %x = pca_loading number, y = its index
 
 [x1 y1]=sort(pca_loadings(:,1),'descend');
