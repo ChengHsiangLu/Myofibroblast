@@ -560,7 +560,7 @@ dlmwrite('RBarretTNFATGFBCnt_GMask.txt', RBarretTNFATGFBCnt_GMask,'delimiter','\
 
 <br>
 
-### In R
+### Differential expression analysis in R
 
 #### Install packages
 
@@ -615,7 +615,7 @@ done
 
 #### Generate a sampleTableTNFATGFB 
 
-The sampleTableTNFATGFB contains Treatment, Line, Pheno, Sex, Pass, Factor, and Batch.
+The sampleTableTNFATGFB contains the experimental factors: Treatment, iPSc Line, fibrotic phenotype (Pheno), Sex, number of iPSC passages (Pass), Factor, and Batch.
 
 ```
 
