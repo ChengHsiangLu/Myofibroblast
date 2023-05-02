@@ -522,7 +522,7 @@ plot(thistree,'ORIENTATION','top')
 
 ```
 
-Basically, the plot is clustered by their treatments.
+Agains, the samples are clustered largely by their treatment status but in a more consistent fashion as compared to the unfiltered dataset.
 
 ![](/Pics/Second_dendrogram.png)
 
@@ -530,7 +530,7 @@ Basically, the plot is clustered by their treatments.
 
 #### The percent of the top 100 genes
 
-Calculates the top 100 expressed genes in each sample based on their transcript per million (TPM) values in the RBarretTNFATGFBTPM_GMask matrix.
+Another item for quality control is achieved by calculating the percent of signal attributed to the top 100 expressed genes in each sample based on their transcript per million (TPM) values in the RBarretTNFATGFBTPM_GMask matrix.
 
 ```
 
@@ -543,6 +543,8 @@ top100percent(i)=sum(RBarretTNFATGFBTPM_GMask(y(1:100),i))/1000000;
 end
 
 ```
+
+I find that, for some samples, the top 100 most-expressed genes accumulate ~40% of the total TPMs for the sample, while the average is ~25%. I will keep track of these number in case those samples show outlier behaviour in downstream analyses. 
 
 In the end, we store the Gencode\_33\_Selected\_Geneid\_GMask.txt, Gencode\_33\_Selected\_Genename\_GMask.txt, Gencode\_33\_Selected\_MappSS\_GMask.txt, RBarretTNFATGFBTPM\_GMask.txt, and RBarretTNFATGFBCnt\_GMask.txt for ours further analysis in R.
 
