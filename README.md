@@ -379,11 +379,12 @@ plot(thistree, 'ORIENTATION', 'top')
 
 ![](/Pics/first_dendrogram.png)
 
+A first observation is that the major clusters are formed by samples from the same treatment, with exceptions. Therefore, the Treatment factor seems to be the dominant source of gene expression variation in this experiment. 
 <br>
 
 #### All biotypes counts percents
 
-This part of codes is performing all biotypes counts percents across multiple samples. 
+As part of the preliminary quality control, the following estimates the relative contribution of each gene biotype to the expression matrix:
 
 ```
 
@@ -414,7 +415,7 @@ writetable(cell2table(allbiotypes),'allbiotypes.txt','WriteVariableNames',0)
 
 ```
 
-Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescountspercents.txt", and calculate the minimum, maximum, and average values for each biotype. You can access my completed spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx). Notably, protein_coding genes exhibit an average of 98.65% among the various biotypes, consistent with my expectations.
+Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescountspercents.txt", and calculate the minimum, maximum, and average values for each biotype. You can access my completed spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx). Notably, protein_coding genes exhibit an average of 98.65% among the various biotypes, consistent with my expectations. Moreover, I found no samples with 
 
 ![](/Pics/spreadsheet_allbiotypescountspercents.png)
 
