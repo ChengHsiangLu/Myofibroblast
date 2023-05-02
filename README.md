@@ -449,7 +449,7 @@ mappableindx = find(Gencode_33_Selected_MappSS>50);
 
 % a new variable finalIndexGeneric which is the intersection of three other variables: biotypeindx, nonadditionalgenes, and mappableindx.
 finalIndexGeneric = intersect(biotypeindx,intersect(nonadditionalgenes,mappableindx));			
-% find the indices of rows in RBarretTNFATGFBCnt that have a sum greater than 150. 
+% find the indices of rows in RBarretTNFATGFBCnt that have a sum greater than 150 (an average of >1 per sample). 
 countindx = find(sum(RBarretTNFATGFBCnt')'>150);
 
 % update finalIndexGeneric to be the intersection of finalIndexGeneric and countindx.
@@ -471,7 +471,7 @@ Gencode_33_Selected_MappUS_GMask = Gencode_33_Selected_MappUS(finalIndexGeneric)
 
 ```
 
-% normalize the expression data like we do previously
+% normalize the expression data like we did previously, keeping only the filtered set of genes above:
 RBarretTNFATGFBExpression_GMask = RBarretTNFATGFBCnt_GMask;
 for i=1:size(RBarretTNFATGFBExpression_GMask,2)
 RBarretTNFATGFBExpression_GMask(:,i) = RBarretTNFATGFBCnt_GMask(:,i)/sum(RBarretTNFATGFBCnt_GMask(:,i))*1000000;
@@ -506,7 +506,7 @@ end
 #### Dendrogram with only protein coding genes
 
 
-Perform hierarchical clustering on a subset of the gene expression data stored in the variable RBarretTNFATGFBTPM_GMask with only protein coding genes.
+Perform hierarchical clustering on the filtered gene expression data stored in the variable RBarretTNFATGFBTPM_GMask:
 
 ```
 
