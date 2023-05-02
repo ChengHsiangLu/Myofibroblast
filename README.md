@@ -423,7 +423,7 @@ Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescounts
 
 #### Protein coding genes
 
-The "allbiotypes.txt" file contains multiple biotypes. For the next step, I will only retain the "protein_coding" biotype.
+The "allbiotypes.txt" file contains multiple biotypes. For the next step, I will only retain the "protein_coding" biotype. I will also remove some gene classes that tipically show very noisy or variable gene expression across different samples (e.g histone and ribosomal genes, among others). 
 
 ```
 
