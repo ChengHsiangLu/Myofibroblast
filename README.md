@@ -636,11 +636,9 @@ write.table(sampleTableTNFATGFB,file="sampleTableTNFATGFB.txt", sep = "\t", col.
 
 #### DESeq2 package
 
-The RBarretTNFATGFBCntGMaskBatch is created with the **Batch** information specified in the design formula, while the RBarretTNFATGFBCntGMaskFactor is created with the **treatment and phenotype** information specified in the design formula.
+Different experimental factors are tested while creating the DESEq object for differential expression, to check if there are significant differences. The RBarretTNFATGFBCntGMaskBatch is created with the **Batch** information specified in the design formula, while the RBarretTNFATGFBCntGMaskFactor is created with the **treatment and phenotype** information specified in the design formula. I also tested if fitting the data to the first principal component (PC1, see below) makes a difference in the first steps.
 
-Next, the DESeq function is used to estimate size factors and dispersion values for the DESeqDataSet objects.
-
-Finally, the varianceStabilizingTransformation function is used to perform variance stabilizing transformation on the DESeqDataSet objects. This transformation is important for reducing the effect of noise and impose heteroscedasticity in the data, making it more suitable for downstream analyses such as linear modeling and clustering.
+The DESeq function is used to estimate size factors and dispersion values for the DESeqDataSet objects. Using this object, we first use the varianceStabilizingTransformation function  to perform variance stabilizing transformation. This transformation is important for reducing the effect of noise and impose heteroscedasticity in the data, making it more suitable for downstream analyses such as linear modeling and clustering.
 
 ```
 
@@ -650,8 +648,12 @@ RBarretTNFATGFBCntGMaskBatch <- DESeq(RBarretTNFATGFBCntGMaskBatch)
 RBarretTNFATGFBCntGMaskFactor <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= sampleTableTNFATGFB,design= ~Factor)
 RBarretTNFATGFBCntGMaskFactor <- DESeq(RBarretTNFATGFBCntGMaskFactor)
 
+RBarretTNFATGFBCntGMaskPC1 <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= pcabatchR,design= ~PC1)
+RBarretTNFATGFBCntGMaskPC1 <- DESeq(RBarretTNFATGFBCntGMaskPC1)
+
 RBarretTNFATGFBCntGMaskBatch_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskBatch,blind=FALSE)
 RBarretTNFATGFBCntGMaskFactor_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskFactor,blind=FALSE)
+RBarretTNFATGFBCntGMaskPC1_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskPC1,blind=FALSE)
 
 ```
 
@@ -681,10 +683,7 @@ pcabatchR<- cbind(pcabatchALL,sampleTableTNFATGFB)
 pcabatchR$PC1 <- scale(pcabatchR$PC1, center = TRUE)
 
 
-RBarretTNFATGFBCntGMaskPC1 <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= pcabatchR,design= ~PC1)
-RBarretTNFATGFBCntGMaskPC1 <- DESeq(RBarretTNFATGFBCntGMaskPC1)
 
-RBarretTNFATGFBCntGMaskPC1_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskPC1,blind=FALSE)
 
 ```
 
