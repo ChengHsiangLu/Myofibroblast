@@ -716,7 +716,7 @@ The plot shows the relationship between **PC1 and PC2** colored by **Pheno** var
 
 Four distinct groups were formed based on their treatment: the CC group (untreated) is located in the right corner, the TG group (treated with TGF-b) is located at the bottom, the TN group (treated with TNF-a) is located in the right corner, and the TT group (treated with both TGF-b and TNF-a) is located at the top. These groups were differentiated based on PC1, which accounted for 19% of the variance.
 
-![](/Pics/PCA_Pheno_Treatment.png)
+![](/Pics/PCA_treatment.jpeg)
 
 <br>
 
