@@ -22,16 +22,12 @@ Email: David.Casero@cshs.org
 
 ### Inflammatory bowel diseases(IBD) 
 
-Inflammatory bowel diseases (IBD) are a group of chronic conditions that cause inflammation and damage to the digestive tract. The two main types of IBD are Crohn's Disease and Ulcerative Colitis. 
+Inflammatory bowel diseases (IBD) are a group of chronic conditions that cause inflammation and damage to the digestive tract. The two main types of IBD are Crohn's Disease (CD) and Ulcerative Colitis (UC). Both Crohn's disease and ulcerative colitis are chronic conditions, meaning they can last for a lifetime and require ongoing treatment to manage symptoms and prevent complications. 
 
+UC affects only the colon and rectum and causes symptoms such as bloody diarrhea, abdominal pain, and a frequent need to pass stools. It can also lead to complications such as inflammation of the skin, eyes, and joints. On the other hand, CD can affect any part of the digestive tract, like small or large intestine, and can cause symptoms such as abdominal pain, diarrhea, weight loss, and fatigue. It can also cause complications such as fistulas (abnormal connections between different parts of the intestine) 
 
-Crohn's disease can affect any part of the digestive tract, like small or large intestine, and can cause symptoms such as abdominal pain, diarrhea, weight loss, and fatigue. It can also cause complications such as fistulas (abnormal connections between different parts of the intestine) and strictures (narrowing of the intestine). 
+On of the most prevalent complication of CD is the onset of fibrotic complications and strictures (narrowing of the intestine). The molecular mechanisms involved in these phenotypes remain largely unknown, and as a result, there are currently no effective drugs to prevent or treat stricturing CD.
 
-
-Ulcerative colitis, on the other hand, affects only the colon and rectum and causes symptoms such as bloody diarrhea, abdominal pain, and a frequent need to pass stools. It can also lead to complications such as inflammation of the skin, eyes, and joints. 
-
-
-Both Crohn's disease and ulcerative colitis are chronic conditions, meaning they can last for a lifetime and require ongoing treatment to manage symptoms and prevent complications. 
 
 <br>
 
@@ -49,7 +45,7 @@ iPSCs can be differentiated into multiple cell and tissue types, and can therefo
 
 ## Aim 
 
-In this project, we will be analyzing RNA-seq data from 19 iPSC lines that were differentiated into gut mesenchymal organoids. This panel comprises 10 iPSC lines derived from Crohn's disease patients that suffered fibrotic complications, and 9 lines from patients with non-fibrotic disease. Each iPSC line was differentiated into mesenchymal organoids in two independent replicates, and each was subjected to 4 different treatments:
+In this project, we aim to take advantage of iPSC lines to unveil specific signaling pathways specifically affected in patients with fibrotic CD. We will be analyzing RNA-seq data from 19 iPSC lines that were differentiated into gut mesenchymal organoids. This panel comprises 10 iPSC lines derived from Crohn's disease patients that suffered fibrotic complications, and 9 lines from patients with non-fibrotic disease. Each iPSC line was differentiated into mesenchymal organoids in two independent replicates, and each was subjected to 4 different treatments:
 
 * untreated 
 * TGFb (a pro-fibrotic cytokine) 
@@ -148,7 +144,7 @@ echo '#!/bin/bash/' > sendmyof
 
 ``` 
 
-The command below runs the "generatesendscriptSingleGTFParam" script with several input parameters to map the RNA-seq data with STAR. The input parameters include the list of target directories containing the input data ("targetdirectories.GTF.txt"), the subdirectory name ("GTFpass1"), a parameter file containing settings for STAR alignment ("Parameters.txt"), a prefix for output files ("myof"), the path to the STAR index directory ("/home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/"), the path to the input data directory ("/home/luc/iPSC/MYOFIBROBLAST/"), the amount of free memory to use ("mem_free=32G"), and the number of threads to use ("8"). In the end, it will generate a "processLaneSingleGTFParam" file and run the STAR package in each sample's folder.
+The command below runs the "generatesendscriptSingleGTFParam" script with several input parameters to map the RNA-seq data with STAR. The input parameters include the list of target directories containing the input data ("targetdirectories.GTF.txt"), the directory prefix for pass-1 alignments ("GTFpass1"), a parameter file containing settings for STAR alignment ("Parameters.txt"), a prefix for individual submission scripts to HPC ("myof"), the path to the STAR index directory ("/home/luc/RNASEQ_MASTER/Hsapiens/GRC38/INDEXES/GRCh38.primary.33.basicselected.STAR2.7.3a/"), the path to the input data directory ("/home/luc/iPSC/MYOFIBROBLAST/"), the amount of free memory to use ("mem_free=32G"), and the number of threads to use ("8"). In the end, it will generate a sample-specific sumission script called "processLaneSingleGTFParam" in each sample's folder:
  
 ``` 
 
@@ -219,6 +215,8 @@ paste temp2.txt tempprev.txt > mappingstatsFirstpass.txt
 The mappingstatsFirstpass.txt would look like this:
 
 ![](/Pics/mappingstatsFirstpass.png)
+
+The summary statistics show good rates of unique alignments for all samples.
 
 <br> 
 
@@ -314,7 +312,7 @@ RBarretTNFATGFBmeta_seqdepth=round(sum(RBarretTNFATGFBCnt)/1000000);
 
 ```
 
-You can find these annotation in the "mappability and R code" folder.
+The following files contain the annotation and gene effective lenghts (mappabilities) for the human gene annoation used for alignment, and can be found in the  "mappability and R code" folder.
 
 ```
 
@@ -381,11 +379,12 @@ plot(thistree, 'ORIENTATION', 'top')
 
 ![](/Pics/first_dendrogram.png)
 
+A first observation is that the major clusters are formed by samples from the same treatment, with exceptions. Therefore, the Treatment factor seems to be the dominant source of gene expression variation in this experiment. 
 <br>
 
 #### All biotypes counts percents
 
-This part of codes is performing all biotypes counts percents across multiple samples. 
+As part of the preliminary quality control, the following estimates the relative contribution of each gene biotype to the expression matrix:
 
 ```
 
@@ -416,7 +415,7 @@ writetable(cell2table(allbiotypes),'allbiotypes.txt','WriteVariableNames',0)
 
 ```
 
-Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescountspercents.txt", and calculate the minimum, maximum, and average values for each biotype. You can access my completed spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx). Notably, protein_coding genes exhibit an average of 98.65% among the various biotypes, consistent with my expectations.
+Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescountspercents.txt", and calculate the minimum, maximum, and average values for each biotype. You can access my completed spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx). Notably, protein_coding genes exhibit an average of 98.65% among the various biotypes, consistent with my expectations. Moreover, I found no samples with excessive contributions from other biotypes (e.g. mitochondrial and non-coding RNAs), and therefore no library quality issues were found in this step: 
 
 ![](/Pics/spreadsheet_allbiotypescountspercents.png)
 
@@ -424,7 +423,7 @@ Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescounts
 
 #### Protein coding genes
 
-The "allbiotypes.txt" file contains multiple biotypes. For the next step, I will only retain the "protein_coding" biotype.
+The "allbiotypes.txt" file contains multiple biotypes. For the next step, I will only retain the "protein_coding" biotype. I will also remove some gene classes that tipically show very noisy or variable gene expression across different samples (e.g histone and ribosomal genes, among others). 
 
 ```
 
@@ -450,7 +449,7 @@ mappableindx = find(Gencode_33_Selected_MappSS>50);
 
 % a new variable finalIndexGeneric which is the intersection of three other variables: biotypeindx, nonadditionalgenes, and mappableindx.
 finalIndexGeneric = intersect(biotypeindx,intersect(nonadditionalgenes,mappableindx));			
-% find the indices of rows in RBarretTNFATGFBCnt that have a sum greater than 150. 
+% find the indices of rows in RBarretTNFATGFBCnt that have a sum greater than 150 (an average of >1 per sample). 
 countindx = find(sum(RBarretTNFATGFBCnt')'>150);
 
 % update finalIndexGeneric to be the intersection of finalIndexGeneric and countindx.
@@ -472,7 +471,7 @@ Gencode_33_Selected_MappUS_GMask = Gencode_33_Selected_MappUS(finalIndexGeneric)
 
 ```
 
-% normalize the expression data like we do previously
+% normalize the expression data like we did previously, keeping only the filtered set of genes above:
 RBarretTNFATGFBExpression_GMask = RBarretTNFATGFBCnt_GMask;
 for i=1:size(RBarretTNFATGFBExpression_GMask,2)
 RBarretTNFATGFBExpression_GMask(:,i) = RBarretTNFATGFBCnt_GMask(:,i)/sum(RBarretTNFATGFBCnt_GMask(:,i))*1000000;
@@ -507,7 +506,7 @@ end
 #### Dendrogram with only protein coding genes
 
 
-Perform hierarchical clustering on a subset of the gene expression data stored in the variable RBarretTNFATGFBTPM_GMask with only protein coding genes.
+Perform hierarchical clustering on the filtered gene expression data stored in the variable RBarretTNFATGFBTPM_GMask:
 
 ```
 
@@ -523,7 +522,7 @@ plot(thistree,'ORIENTATION','top')
 
 ```
 
-Basically, the plot is clustered by their treatments.
+Agains, the samples are clustered largely by their treatment status but in a more consistent fashion as compared to the unfiltered dataset.
 
 ![](/Pics/Second_dendrogram.png)
 
@@ -531,7 +530,7 @@ Basically, the plot is clustered by their treatments.
 
 #### The percent of the top 100 genes
 
-Calculates the top 100 expressed genes in each sample based on their transcript per million (TPM) values in the RBarretTNFATGFBTPM_GMask matrix.
+Another item for quality control is achieved by calculating the percent of signal attributed to the top 100 expressed genes in each sample based on their transcript per million (TPM) values in the RBarretTNFATGFBTPM_GMask matrix.
 
 ```
 
@@ -544,6 +543,8 @@ top100percent(i)=sum(RBarretTNFATGFBTPM_GMask(y(1:100),i))/1000000;
 end
 
 ```
+
+I find that, for some samples, the top 100 most-expressed genes accumulate ~40% of the total TPMs for the sample, while the average is ~25%. I will keep track of these number in case those samples show outlier behaviour in downstream analyses. 
 
 In the end, we store the Gencode\_33\_Selected\_Geneid\_GMask.txt, Gencode\_33\_Selected\_Genename\_GMask.txt, Gencode\_33\_Selected\_MappSS\_GMask.txt, RBarretTNFATGFBTPM\_GMask.txt, and RBarretTNFATGFBCnt\_GMask.txt for ours further analysis in R.
 
@@ -559,7 +560,7 @@ dlmwrite('RBarretTNFATGFBCnt_GMask.txt', RBarretTNFATGFBCnt_GMask,'delimiter','\
 
 <br>
 
-### In R
+### Differential expression analysis in R
 
 #### Install packages
 
@@ -614,7 +615,7 @@ done
 
 #### Generate a sampleTableTNFATGFB 
 
-The sampleTableTNFATGFB contains Treatment, Line, Pheno, Sex, Pass, Factor, and Batch.
+The sampleTableTNFATGFB contains the experimental factors: Treatment, iPSc line (Line), fibrotic phenotype (Pheno), Sex, number of iPSC passages (Pass), the combination of phenotype and treatment (Factor), and the combination of line and passages (Batch).
 
 ```
 
@@ -635,11 +636,9 @@ write.table(sampleTableTNFATGFB,file="sampleTableTNFATGFB.txt", sep = "\t", col.
 
 #### DESeq2 package
 
-The RBarretTNFATGFBCntGMaskBatch is created with the **Batch** information specified in the design formula, while the RBarretTNFATGFBCntGMaskFactor is created with the **treatment and phenotype** information specified in the design formula.
+Different experimental factors are tested while creating the DESEq object for differential expression, to check if there are significant differences. The RBarretTNFATGFBCntGMaskBatch is created with the **Batch** information specified in the design formula, while the RBarretTNFATGFBCntGMaskFactor is created with the **treatment and phenotype** information specified in the design formula. I also tested if fitting the data to the first principal component (PC1, see below) makes a difference in the first steps.
 
-Next, the DESeq function is used to estimate size factors and dispersion values for the DESeqDataSet objects.
-
-Finally, the varianceStabilizingTransformation function is used to perform variance stabilizing transformation on the DESeqDataSet objects. This transformation is important for reducing the effect of noise and heteroscedasticity in the data, making it more suitable for downstream analyses such as differential gene expression analysis.
+The DESeq function is used to estimate size factors and dispersion values for the DESeqDataSet objects. Using this object, we first use the varianceStabilizingTransformation function  to perform variance stabilizing transformation. This transformation is important for reducing the effect of noise and impose heteroscedasticity in the data, making it more suitable for downstream analyses such as linear modeling and clustering.
 
 ```
 
@@ -649,14 +648,18 @@ RBarretTNFATGFBCntGMaskBatch <- DESeq(RBarretTNFATGFBCntGMaskBatch)
 RBarretTNFATGFBCntGMaskFactor <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= sampleTableTNFATGFB,design= ~Factor)
 RBarretTNFATGFBCntGMaskFactor <- DESeq(RBarretTNFATGFBCntGMaskFactor)
 
+RBarretTNFATGFBCntGMaskPC1 <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= pcabatchR,design= ~PC1)
+RBarretTNFATGFBCntGMaskPC1 <- DESeq(RBarretTNFATGFBCntGMaskPC1)
+
 RBarretTNFATGFBCntGMaskBatch_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskBatch,blind=FALSE)
 RBarretTNFATGFBCntGMaskFactor_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskFactor,blind=FALSE)
+RBarretTNFATGFBCntGMaskPC1_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskPC1,blind=FALSE)
 
 ```
 
 <br>
 
-#### PCA
+#### Principal Component Analysis (PCA)
 
 ```
 
@@ -680,10 +683,7 @@ pcabatchR<- cbind(pcabatchALL,sampleTableTNFATGFB)
 pcabatchR$PC1 <- scale(pcabatchR$PC1, center = TRUE)
 
 
-RBarretTNFATGFBCntGMaskPC1 <- DESeqDataSetFromMatrix(RBarretTNFATGFBCntGMask, colData= pcabatchR,design= ~PC1)
-RBarretTNFATGFBCntGMaskPC1 <- DESeq(RBarretTNFATGFBCntGMaskPC1)
 
-RBarretTNFATGFBCntGMaskPC1_vsd <- varianceStabilizingTransformation(RBarretTNFATGFBCntGMaskPC1,blind=FALSE)
 
 ```
 
@@ -704,17 +704,12 @@ ggplot(pcabatchR, aes(PC1, PC2, color= Sex)) +
   xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +
   ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) + theme_bw()
 
-ggplot(pcabatchR, aes(PC2, PC9, color= Pheno)) +
-  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Treatment),color="black",alpha=0.2) +
-  xlab(paste0("PC2: ",percentVarbatch[2],"% variance")) +
-  ylab(paste0("PC9: ",percentVarbatch[9],"% variance")) +
-  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = 'grey50')+ theme_bw()
 
 ```
 
-The plot shows the relationship between **PC1 and PC2** colored by **Pheno** variable, with the point size indicating the **Treatment** variable.
+The plot shows the clustering of all samples using the first two principal components, **PC1 and PC2**, colored by **Pheno** variable, with the point size indicating the **Treatment** variable.
 
-Four distinct groups were formed based on their treatment: the CC group (untreated) is located in the right corner, the TG group (treated with TGF-b) is located at the bottom, the TN group (treated with TNF-a) is located in the right corner, and the TT group (treated with both TGF-b and TNF-a) is located at the top. These groups were differentiated based on PC1, which accounted for 19% of the variance.
+Four distinct groups were formed based on their treatment: the CC group (untreated) is located in the right corner, the TG group (treated with TGF-b) is located at the bottom, the TN group (treated with TNF-a) is located in the right corner, and the TT group (treated with both TGF-b and TNF-a) is located at the top. These 4 groups were differentiated based on the combination of both PC1 and PC2, which accounted for 19% and 17% of the variance, respectively.
 
 ![](/Pics/PCA_treatment.jpeg)
 
@@ -723,7 +718,7 @@ Four distinct groups were formed based on their treatment: the CC group (untreat
 
 #### A series of bar plots (one for each principal component)
 
-Each bar plot represents the loadings of all samples on a given principal component. 
+Each bar plot represents the coordinates of all samples on a given principal component. These plots provide a quick visual evaluation of the potential association of each component with specific experimental factors.
 
 ```
 
@@ -764,9 +759,9 @@ write.csv(pcabatch$x,file="pca_batchmodel_x.csv")
 
 ```
 
-A red line is drawn at position 72 in order to separate the non-fibrotic group and the fibrotic group. Within each patient, the treatment order would be CC, TG, TN, TT. The color of each bar represents the batch of the sample, with a unique color assigned to each batch. The vertical lines on the plot indicate the position of specific loadings, with thin and thick lines indicating different positions. 
+To facilitate visualization, a red line is drawn at position 72 in order to separate the non-fibrotic group from the fibrotic group. Within each patient, the treatment order would be CC, TG, TN, TT. The color of each bar represents the batch of the sample, with a unique color assigned to each batch. The vertical lines on the plot separate the data for individual iPSC lines and their two batches.  
 
-For example, this is PC_1.png. From this plot, you can see that the highest sxpression is closely related with TNF-a. As for the first patient, compaire to the contorl(untreated), the TNF-a group is much higher and the TT group (TGF-b+TNF-a) is not that high.
+The barplot below represents PC1 for all samples. From this plot, one can see that PC1 corresponds to extreme expression after treatment with TNF-a in all cases, even more that after its combination with TGF-b. Therefore, it seems to indicate that PC1 is associated with an interaction between TNF-a and TGF-b in iPSC mesenchymal organoids, an unexpected finding that warrants further analysis. 
 
 ![](/Pics/PCs/PC_1.png)
 
@@ -774,7 +769,7 @@ For example, this is PC_1.png. From this plot, you can see that the highest sxpr
 
 #### PCA rank matrix
 
-Take csv files and converts it to the txt files with the second column onwards. It does this by first removing the first row using awk, replacing multiple commas with tabs using tr, and removing the first column using cut.
+For easier visualization, I next clean the PCA results for exporting into spreadsheets. Take csv files and converts it to the txt files with the second column onwards. It does this by first removing the first row using awk, replacing multiple commas with tabs using tr, and removing the first column using cut.
 
 ```
 
@@ -879,7 +874,7 @@ write.table(combined_spreadsheet,file="combined_spreadsheet.txt", sep = "\t", ro
 
 ```
 
-You can sort this sheet with PC1, PC2, and so on to see the corelation between the treatment and the expression level in each gene.
+You can sort this sheet with PC1, PC2, and so on to see the correlation between the experimental factors and the expression level of each gene, which allows a quick identification of genes and gene classes more associated with the dominant sources of gene expression variability in this experiment.
 
 ![](/Pics/spreadsheet.png)
 
