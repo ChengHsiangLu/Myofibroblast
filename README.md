@@ -640,7 +640,7 @@ The RBarretTNFATGFBCntGMaskBatch is created with the **Batch** information speci
 
 Next, the DESeq function is used to estimate size factors and dispersion values for the DESeqDataSet objects.
 
-Finally, the varianceStabilizingTransformation function is used to perform variance stabilizing transformation on the DESeqDataSet objects. This transformation is important for reducing the effect of noise and heteroscedasticity in the data, making it more suitable for downstream analyses such as differential gene expression analysis.
+Finally, the varianceStabilizingTransformation function is used to perform variance stabilizing transformation on the DESeqDataSet objects. This transformation is important for reducing the effect of noise and impose heteroscedasticity in the data, making it more suitable for downstream analyses such as linear modeling and clustering.
 
 ```
 
@@ -657,7 +657,7 @@ RBarretTNFATGFBCntGMaskFactor_vsd <- varianceStabilizingTransformation(RBarretTN
 
 <br>
 
-#### PCA
+#### Principal Component Analysis (PCA)
 
 ```
 
