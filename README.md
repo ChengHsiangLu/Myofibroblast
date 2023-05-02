@@ -615,7 +615,7 @@ done
 
 #### Generate a sampleTableTNFATGFB 
 
-The sampleTableTNFATGFB contains the experimental factors: Treatment, iPSc Line, fibrotic phenotype (Pheno), Sex, number of iPSC passages (Pass), Factor, and Batch.
+The sampleTableTNFATGFB contains the experimental factors: Treatment, iPSc line (Line), fibrotic phenotype (Pheno), Sex, number of iPSC passages (Pass), the combination of phenotype and treatment (Factor), and the combination of line and passages (Batch).
 
 ```
 
