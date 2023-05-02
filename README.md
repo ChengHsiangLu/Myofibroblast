@@ -707,7 +707,7 @@ ggplot(pcabatchR, aes(PC1, PC2, color= Sex)) +
 
 ```
 
-The plot shows the relationship between **PC1 and PC2** colored by **Pheno** variable, with the point size indicating the **Treatment** variable.
+The plot shows the clustering of all samples using the first two principal components, **PC1 and PC2**, colored by **Pheno** variable, with the point size indicating the **Treatment** variable.
 
 Four distinct groups were formed based on their treatment: the CC group (untreated) is located in the right corner, the TG group (treated with TGF-b) is located at the bottom, the TN group (treated with TNF-a) is located in the right corner, and the TT group (treated with both TGF-b and TNF-a) is located at the top. These groups were differentiated based on PC1, which accounted for 19% of the variance.
 
