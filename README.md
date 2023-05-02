@@ -759,9 +759,9 @@ write.csv(pcabatch$x,file="pca_batchmodel_x.csv")
 
 ```
 
-To facilitate visualization, a red line is drawn at position 72 in order to separate the non-fibrotic group from the fibrotic group. Within each patient, the treatment order would be CC, TG, TN, TT. The color of each bar represents the batch of the sample, with a unique color assigned to each batch. The vertical lines on the plot indicate the position of specific loadings, with thin and thick lines indicating different positions. 
+To facilitate visualization, a red line is drawn at position 72 in order to separate the non-fibrotic group from the fibrotic group. Within each patient, the treatment order would be CC, TG, TN, TT. The color of each bar represents the batch of the sample, with a unique color assigned to each batch. The vertical lines on the plot separate the data for individual iPSC lines and their two batches.  
 
-For example, this is PC_1.png. From this plot, you can see that the highest sxpression is closely related with TNF-a. As for the first patient, compaire to the contorl(untreated), the TNF-a group is much higher and the TT group (TGF-b+TNF-a) is not that high.
+The barplot below represents PC1 for all samples. From this plot, you can see that PC1 corresponds to extreme expression after treatment with TNF-a in all cases. As for the first patient, compaire to the contorl(untreated), the TNF-a group is much higher and the TT group (TGF-b+TNF-a) is not that high.
 
 ![](/Pics/PCs/PC_1.png)
 
