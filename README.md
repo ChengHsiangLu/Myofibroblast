@@ -761,7 +761,7 @@ write.csv(pcabatch$x,file="pca_batchmodel_x.csv")
 
 To facilitate visualization, a red line is drawn at position 72 in order to separate the non-fibrotic group from the fibrotic group. Within each patient, the treatment order would be CC, TG, TN, TT. The color of each bar represents the batch of the sample, with a unique color assigned to each batch. The vertical lines on the plot separate the data for individual iPSC lines and their two batches.  
 
-The barplot below represents PC1 for all samples. From this plot, you can see that PC1 corresponds to extreme expression after treatment with TNF-a in all cases. As for the first patient, compaire to the contorl(untreated), the TNF-a group is much higher and the TT group (TGF-b+TNF-a) is not that high.
+The barplot below represents PC1 for all samples. From this plot, one can see that PC1 corresponds to extreme expression after treatment with TNF-a in all cases, even more that after its combination with TGF-b. Therefore, it seems to indicate that PC1 is associated with an interaction between TNF-a and TGF-b in iPSC mesenchymal organoids, an unexpected finding that warrants further analysis. 
 
 ![](/Pics/PCs/PC_1.png)
 
@@ -769,7 +769,7 @@ The barplot below represents PC1 for all samples. From this plot, you can see th
 
 #### PCA rank matrix
 
-Take csv files and converts it to the txt files with the second column onwards. It does this by first removing the first row using awk, replacing multiple commas with tabs using tr, and removing the first column using cut.
+For easier visualization, I next clean the PCA results for exporting into spreadsheets. Take csv files and converts it to the txt files with the second column onwards. It does this by first removing the first row using awk, replacing multiple commas with tabs using tr, and removing the first column using cut.
 
 ```
 
@@ -874,7 +874,7 @@ write.table(combined_spreadsheet,file="combined_spreadsheet.txt", sep = "\t", ro
 
 ```
 
-You can sort this sheet with PC1, PC2, and so on to see the corelation between the treatment and the expression level in each gene.
+You can sort this sheet with PC1, PC2, and so on to see the correlation between the experimental factors and the expression level of each gene, which allows a quick identification of genes and gene classes more associated with the dominant sources of gene expression variability in this experiment.
 
 ![](/Pics/spreadsheet.png)
 
