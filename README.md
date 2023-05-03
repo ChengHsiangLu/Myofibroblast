@@ -26,7 +26,7 @@ Inflammatory bowel diseases (IBD) are a group of chronic conditions that cause i
 
 UC affects only the colon and rectum and causes symptoms such as bloody diarrhea, abdominal pain, and a frequent need to pass stools. It can also lead to complications such as inflammation of the skin, eyes, and joints. On the other hand, CD can affect any part of the digestive tract, like small or large intestine, and can cause symptoms such as abdominal pain, diarrhea, weight loss, and fatigue. It can also cause complications such as fistulas (abnormal connections between different parts of the intestine) 
 
-On of the most prevalent complication of CD is the onset of fibrotic complications and strictures (narrowing of the intestine). The molecular mechanisms involved in these phenotypes remain largely unknown, and as a result, there are currently no effective drugs to prevent or treat stricturing CD.
+On of the most prevalent complication of CD is the onset of fibrotic complications and strictures (narrowing of the intestine)[1]. The molecular mechanisms involved in these phenotypes remain largely unknown, and as a result, there are currently no effective drugs to prevent or treat stricturing CD.
 
 
 <br>
@@ -39,23 +39,23 @@ Induced pluripotent stem cells (iPSCs) are a type of stem cell that are generate
 iPSCs offer several advantages as they can be generated from the patient's own cells, avoiding issues with immune rejection, ethical concerns and the need for embryos. 
 
 
-iPSCs can be differentiated into multiple cell and tissue types, and can therefore be used to study the underlying causes of diseases, test new drugs and therapies, and potentially generate replacement tissues or organs for transplantation. As iPSCs possess the same genetic background as the patient they are derived from, they are considered an instrumental tool in the field of personalized and precision medicine. 
+iPSCs can be differentiated into multiple cell and tissue types, and can therefore be used to study the underlying causes of diseases, test new drugs and therapies, and potentially generate replacement tissues or organs for transplantation. As iPSCs possess the same genetic background as the patient they are derived from, they are considered an instrumental tool in the field of personalized and precision medicine[2].
 
 <br> 
 
 ## Aim 
 
-In this project, we aim to take advantage of iPSC lines to unveil specific signaling pathways specifically affected in patients with fibrotic CD. We will be analyzing RNA-seq data from 19 iPSC lines that were differentiated into gut mesenchymal organoids. This panel comprises 10 iPSC lines derived from Crohn's disease patients that suffered fibrotic complications, and 9 lines from patients with non-fibrotic disease. Each iPSC line was differentiated into mesenchymal organoids in two independent replicates, and each was subjected to 4 different treatments:
+In this project, we aim to take advantage of iPSC lines to unveil specific signaling pathways specifically affected in patients with fibrotic CD[3]. We will be analyzing RNA-seq data from 19 iPSC lines that were differentiated into gut mesenchymal organoids. This panel comprises 10 iPSC lines derived from Crohn's disease patients that suffered fibrotic complications, and 9 lines from patients with non-fibrotic disease. Each iPSC line was differentiated into mesenchymal organoids in two independent replicates, and each was subjected to 4 different treatments:
 
 * untreated 
-* TGFb (a pro-fibrotic cytokine) 
+* TGFb (a pro-fibrotic cytokine)[4]
 * TNFa (a pro-inflammatory cytokine) 
 * and the combination of TGF-b+TNF-a
 
 The final RNA-Seq dataset comprised a total of 151 samples(1 library failed). The objective is to 
 
-* investigate if the effect of the four different treatments in iPSC-derived organoids recapitulate the expected responses observed in-vivo.
-* perform differential expression analysis to identify genes that show differential responses between fibrotic and non-fibrotic patients.
+* investigate if the effect of the four different treatments in iPSC-derived organoids recapitulate the expected responses observed in-vivo[5].
+* perform differential expression analysis to identify genes that show differential responses between fibrotic and non-fibrotic patients[6].
 
 <br> 
 
@@ -888,18 +888,11 @@ You can sort this sheet with PC1, PC2, and so on to see the correlation between 
 
 ## References 
 
-1.	Dovrolis, N., et al., Co-expression of fibrotic genes in inflammatory bowel disease; A localized event? Front Immunol, 2022. 13: p. 1058237.
-2.	Edgar, R.D., et al., Culture-Associated DNA Methylation Changes Impact on Cellular Function of Human Intestinal Organoids. Cell Mol Gastroenterol Hepatol, 2022. 14(6): p. 1295-1310.
-3.	Ihara, S., Y. Hirata, and K. Koike, TGF-beta in inflammatory bowel disease: a key regulator of immune cells, epithelium, and the intestinal microbiota. J Gastroenterol, 2017. 52(7): p. 777-787.
-4.	Lindeboom, R.G., et al., Integrative multi-omics analysis of intestinal organoid differentiation. Mol Syst Biol, 2018. 14(6): p. e8227.
-5.	Ma, Q., et al., OrganoidDB: a comprehensive organoid database for the multi-perspective exploration of bulk and single-cell transcriptomic profiles of organoids. Nucleic Acids Res, 2023. 51(D1): p. D1086-D1093.
-6.	Wang, Q., et al., Applications of human organoids in the personalized treatment for digestive diseases. Signal Transduct Target Ther, 2022. 7(1): p. 336.
-7.	Corsini, N.S. and J.A. Knoblich, Human organoids: New strategies and methods for analyzing human development and disease. Cell, 2022. 185(15): p. 2756-2769.
-8.	Ingber, D.E., Human organs-on-chips for disease modelling, drug development and personalized medicine. Nat Rev Genet, 2022. 23(8): p. 467-491.
-9.	Brooks, I.R., et al., Functional genomics and the future of iPSCs in disease modeling. Stem Cell Reports, 2022. 17(5): p. 1033-1047.
-10.	D'Alessio, S., et al., Revisiting fibrosis in inflammatory bowel disease: the gut thickens. Nat Rev Gastroenterol Hepatol, 2022. 19(3): p. 169-184.
-11.	Carcamo-Orive, I., et al., Analysis of Transcriptional Variability in a Large Human iPSC Library Reveals Genetic and Non-genetic Determinants of Heterogeneity. Cell Stem Cell, 2017. 20(4): p. 518-532 e9.
-12.	Gleeson, J.P., et al., Development of Physiologically Responsive Human iPSC-Derived Intestinal Epithelium to Study Barrier Dysfunction in IBD. Int J Mol Sci, 2020. 21(4).
-13.	Workman, M.J., et al., Modeling Intestinal Epithelial Response to Interferon-gamma in Induced Pluripotent Stem Cell-Derived Human Intestinal Organoids. Int J Mol Sci, 2020. 22(1).
+1.	D'Alessio, S., et al., Revisiting fibrosis in inflammatory bowel disease: the gut thickens. Nat Rev Gastroenterol Hepatol, 2022. 19(3): p. 169-184.
+2.	Brooks, I.R., et al., Functional genomics and the future of iPSCs in disease modeling. Stem Cell Reports, 2022. 17(5): p. 1033-1047.
+3.	Workman, M.J., et al., Modeling Intestinal Epithelial Response to Interferon-gamma in Induced Pluripotent Stem Cell-Derived Human Intestinal Organoids. Int J Mol Sci, 2020. 22(1).
+4.	Ihara, S., Y. Hirata, and K. Koike, TGF-beta in inflammatory bowel disease: a key regulator of immune cells, epithelium, and the intestinal microbiota. J Gastroenterol, 2017. 52(7): p. 777-787.
+5.	Wang, Q., et al., Applications of human organoids in the personalized treatment for digestive diseases. Signal Transduct Target Ther, 2022. 7(1): p. 336.
+6.	Carcamo-Orive, I., et al., Analysis of Transcriptional Variability in a Large Human iPSC Library Reveals Genetic and Non-genetic Determinants of Heterogeneity. Cell Stem Cell, 2017. 20(4): p. 518-532 e9.
 
 <br>
