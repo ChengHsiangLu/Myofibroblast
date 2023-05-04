@@ -692,16 +692,7 @@ pcabatchR<- cbind(pcabatchALL,sampleTableTNFATGFB)
 
 ```
 
-ggplot(pcabatchR, aes(PC1, PC2, color= Pheno)) +
-  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Pheno),color="black",alpha=0.2) +
-  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +
-  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) +
-  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = 'grey50')+ theme_bw()
-
-ggplot(pcabatchR, aes(PC1, PC2, color= Sex)) +
-  geom_point(aes(size= Treatment),alpha=0.6,stroke = 3)+geom_point(aes(size= Treatment),color="black",alpha=0.2) +
-  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +
-  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) + theme_bw()
+ggplot(pcabatchR, aes(PC1, PC2, color= Treatment)) +  geom_point(aes(size= Pheno),alpha=0.6,stroke = 3)+  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) +  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = 'grey50')+ theme_bw()
 
 
 ```
