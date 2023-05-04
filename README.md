@@ -679,8 +679,7 @@ aloadrelativebatch <- sweep(aloadbatch, 2, colSums(aloadbatch), "/")
 pcabatchALL <- pcabatch$x
 pcabatchR<- cbind(pcabatchALL,sampleTableTNFATGFB)
 
-#center the PC1 scores in pcabatchR to have a mean of 0. This is done so that the PC1 variable can be used as a covariate in the subsequent differential expression analysis.
-pcabatchR$PC1 <- scale(pcabatchR$PC1, center = TRUE)
+
 
 
 
