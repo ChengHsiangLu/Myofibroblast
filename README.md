@@ -273,7 +273,7 @@ ls *.sense.tab | sed 's/.sense.tab//g' | tr -s " " "\n" | sed 's/_1//g' > RBarre
 Make count tables for sense, anti-sense, nostrand, ambiguous, and nofeature reads.
 
 ```  
-****
+
 # combine all sense counts into RBarretTNFATGFB_sense.ALL.cnt 
 paste *.sense.tab > RBarretTNFATGFB_sense.ALL.cnt   
 
