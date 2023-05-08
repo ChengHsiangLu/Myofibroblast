@@ -102,7 +102,7 @@ done
 ``` 
 This is what each fasta-formatted file would look like:
 
-![](/Pics/fasta_format.png)
+![](/Pics/Figure_1.png)
 
 <br>
 
@@ -175,9 +175,9 @@ grep "|" 008iP22TGFbM_S71GTFpass1/008iP22TGFbM_S71GTFpass1Log.final.out | cut -f
 
 ```
 
-The first column from the mapping statistics file.
+The first column from the mapping statistics file in Figure 2.
 
-![](/Pics/mapping_statistics.png)
+![](/Pics/Figure_2.png)
 
 <br>
 
@@ -212,9 +212,9 @@ paste temp2.txt tempprev.txt > mappingstatsFirstpass.txt
 
 ``` 
 
-The mappingstatsFirstpass.txt would look like this:
+The mappingstatsFirstpass.txt would look like Figure 3.
 
-![](/Pics/mappingstatsFirstpass.png)
+![](/Pics/Figure_3.png)
 
 The summary statistics show good rates of unique alignments for all samples.
 
@@ -361,7 +361,7 @@ Make a dendrogram to visualize the relationships among samples in the RBarretTNF
 4. Converts the one-dimensional distance vector 'thisdist' into a distance matrix 'thisdistmat' using the 'squareform' function.
 5. Generates a hierarchical clustering tree based on the distance matrix 'thisdistmat'.
 
-Overall, I perform a clustering analysis on a subset of genes in the RBarretTNFATGFB dataset to visualize the relationships among samples based on their gene expression profiles.
+Overall, I perform a clustering analysis on a subset of genes in the RBarretTNFATGFB dataset to visualize the relationships among samples based on their gene expression profiles in Figure 4.
 
 ```
 
@@ -377,7 +377,7 @@ plot(thistree, 'ORIENTATION', 'top')
 
 ```
 
-![](/Pics/first_dendrogram.png)
+![](/Pics/Figure_4.png)
 
 A first observation is that the major clusters are formed by samples from the same treatment, with exceptions. Therefore, the Treatment factor seems to be the dominant source of gene expression variation in this experiment. 
 <br>
@@ -415,9 +415,9 @@ writetable(cell2table(allbiotypes),'allbiotypes.txt','WriteVariableNames',0)
 
 ```
 
-Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescountspercents.txt", and calculate the minimum, maximum, and average values for each biotype. You can access my completed spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx). Notably, protein_coding genes exhibit an average of 98.65% among the various biotypes, consistent with my expectations. Moreover, I found no samples with excessive contributions from other biotypes (e.g. mitochondrial and non-coding RNAs), and therefore no library quality issues were found in this step: 
+Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescountspercents.txt", and calculate the minimum, maximum, and average values for each biotype. You can access my completed spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx). Notably, protein_coding genes exhibit an average of 98.65% among the various biotypes, consistent with my expectations. Moreover, I found no samples with excessive contributions from other biotypes (e.g. mitochondrial and non-coding RNAs), and therefore no library quality issues were found in this step in Figure 5. 
 
-![](/Pics/spreadsheet_allbiotypescountspercents.png)
+![](/Pics/Figure_5.png)
 
 <br>
 
@@ -522,9 +522,9 @@ plot(thistree,'ORIENTATION','top')
 
 ```
 
-Agains, the samples are clustered largely by their treatment status but in a more consistent fashion as compared to the unfiltered dataset.
+Agains, the samples are clustered largely by their treatment status but in a more consistent fashion as compared to the unfiltered dataset in Figure 6.
 
-![](/Pics/Second_dendrogram.png)
+![](/Pics/Figure_6.png)
 
 <br>
 
@@ -615,7 +615,7 @@ done
 
 #### Generate a sampleTableTNFATGFB 
 
-The sampleTableTNFATGFB contains the experimental factors: Treatment, iPSc line (Line), fibrotic phenotype (Pheno), Sex, number of iPSC passages (Pass), the combination of phenotype and treatment (Factor), and the combination of line and passages (Batch).
+The sampleTableTNFATGFB contains the experimental factors: Treatment, iPSc line (Line), fibrotic phenotype (Pheno), Sex, number of iPSC passages (Pass), the combination of phenotype and treatment (Factor), and the combination of line and passages (Batch) in Figure 7.
 
 ```
 
@@ -630,7 +630,7 @@ write.table(sampleTableTNFATGFB,file="sampleTableTNFATGFB.txt", sep = "\t", col.
 
 ```
 
-![](/Pics/sampleTableTNFATGFB.png)
+![](/Pics/Figure_7.png)
 
 <br>
 
@@ -699,9 +699,9 @@ ggplot(pcabatchR, aes(PC1, PC2, color= Treatment)) +  geom_point(aes(size= Phen
 
 The plot shows the clustering of all samples using the first two principal components, **PC1 and PC2**, colored by **Pheno** variable, with the point size indicating the **Treatment** variable.
 
-Four distinct groups were formed based on their treatment: the CC group (untreated) is located in the right corner, the TG group (treated with TGF-b) is located at the bottom, the TN group (treated with TNF-a) is located in the right corner, and the TT group (treated with both TGF-b and TNF-a) is located at the top. These 4 groups were differentiated based on the combination of both PC1 and PC2, which accounted for 19% and 17% of the variance, respectively.
+In Figure 8, four distinct groups were formed based on their treatment: the CC group (untreated) is located in the right corner, the TG group (treated with TGF-b) is located at the bottom, the TN group (treated with TNF-a) is located in the right corner, and the TT group (treated with both TGF-b and TNF-a) is located at the top. These 4 groups were differentiated based on the combination of both PC1 and PC2, which accounted for 19% and 17% of the variance, respectively.
 
-![](/Pics/PCA_treatment.jpeg)
+![](/Pics/Figure_8.jpeg)
 
 <br>
 
@@ -751,9 +751,9 @@ write.csv(pcabatch$x,file="pca_batchmodel_x.csv")
 
 To facilitate visualization, a red line is drawn at position 72 in order to separate the non-fibrotic group from the fibrotic group. Within each patient, the treatment order would be CC, TG, TN, TT. The color of each bar represents the batch of the sample, with a unique color assigned to each batch. The vertical lines on the plot separate the data for individual iPSC lines and their two batches.  
 
-The barplot below represents PC1 for all samples. From this plot, one can see that PC1 corresponds to extreme expression after treatment with TNF-a in all cases, even more that after its combination with TGF-b. Therefore, it seems to indicate that PC1 is associated with an interaction between TNF-a and TGF-b in iPSC mesenchymal organoids, an unexpected finding that warrants further analysis. 
+The Figure 9 below represents PC1 for all samples. From this plot, one can see that PC1 corresponds to extreme expression after treatment with TNF-a in all cases, even more that after its combination with TGF-b. Therefore, it seems to indicate that PC1 is associated with an interaction between TNF-a and TGF-b in iPSC mesenchymal organoids, an unexpected finding that warrants further analysis. 
 
-![](/Pics/PCs/PC_1.png)
+![](/Pics/PCs/Figure_9.png)
 
 <br>
 
@@ -814,13 +814,13 @@ To efficiently manage our data with a single glance, I have organized it into an
 
 #### Spreadsheet
 
-The first sheet (patients) built on excel contains patients order, patients id, phenotypes, and sex. You can visit the sheet by clicking [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx).
+The Figure 10 (patients) built on excel contains patients order, patients id, phenotypes, and sex. You can visit the sheet by clicking [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx).
 
-![](/Pics/spreadsheet_patient.png)
+![](/Pics/Figure_10.png)
 
 <br>
 
-The second sheet (allbiotypes_percents) includes the names and percentages of all biotypes, along with their respective minimum, maximum, and average values, providing us with a comprehensive overview. You can visit the sheet by clicking [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx).
+The Figure 11 (allbiotypes_percents) includes the names and percentages of all biotypes, along with their respective minimum, maximum, and average values, providing us with a comprehensive overview. You can visit the sheet by clicking [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx).
 
 ```
 
@@ -838,11 +838,11 @@ write.table(combined_spreadsheet2,file="combined_spreadsheet2.txt", sep = "\t", 
 #add their respective minimum, maximum, and average values on Excel
 
 ```
-![](/Pics/spreadsheet_allbiotypes_percents.png)
+![](/Pics/Figure_11.png)
 
 <br>
 
-The third sheet is the main sheet that includes Genename, Geneid, Mapp, PC1, PC2, PC3, and  patient's TPM values.
+The Figure 12 is the main sheet that includes Genename, Geneid, Mapp, PC1, PC2, PC3, and  patient's TPM values.
 
 ```
 
@@ -866,7 +866,7 @@ write.table(combined_spreadsheet,file="combined_spreadsheet.txt", sep = "\t", ro
 
 You can sort this sheet with PC1, PC2, and so on to see the correlation between the experimental factors and the expression level of each gene, which allows a quick identification of genes and gene classes more associated with the dominant sources of gene expression variability in this experiment.
 
-![](/Pics/spreadsheet.png)
+![](/Pics/Figure_12.png)
 
  <br> 
  
