@@ -974,7 +974,7 @@ tail -n +2 RBarretMYOFCntGMaskTreatment_TT.txt | cut -d"," -f3,7 > RBarretMYOFCn
 
 paste Gencode_33_Selected_Geneid_GMask.txt Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_MappSS_GMask.txt  RBarretMYOFCntGMaskFactor_CC_Pheno_test.txt RBarretMYOFCntGMaskFactor_TG_Pheno_test.txt RBarretMYOFCntGMaskFactor_TN_Pheno_test.txt RBarretMYOFCntGMaskFactor_TT_Pheno_test.txt RBarretMYOFCntGMaskTreatment_TG_test.txt RBarretMYOFCntGMaskTreatment_TN_test.txt RBarretMYOFCntGMaskTreatment_TT_test.txt > Barret_Myofibroblast_TGFTNF_PAIRWISEResults.txt
 
-sed 's/,/\t/g' Barret_Myofibroblast_TGFTNF_PAIRWISEResults.txt > Barret_Myofibroblast_TGFTNF_PAIRWISEResults_tab.txts
+sed 's/,/\t/g' Barret_Myofibroblast_TGFTNF_PAIRWISEResults.txt > Barret_Myofibroblast_TGFTNF_PAIRWISEResults.txt
 
 ```
 
