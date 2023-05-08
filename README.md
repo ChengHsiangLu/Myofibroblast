@@ -100,7 +100,7 @@ cat tofastatable.txt | awk {print}' | while read file library preffix ; do qsub 
 done 
 
 ``` 
-This is what each fasta-formatted file would look like in Figure 1.
+Figure 1 shows what each fasta-formatted file look like.
 
 ![](/Pics/Figure_1.png)
 
@@ -212,7 +212,7 @@ paste temp2.txt tempprev.txt > mappingstatsFirstpass.txt
 
 ``` 
 
-The mappingstatsFirstpass.txt would look like Figure 3.
+Figure 3 shows what mappingstatsFirstpass.txt look like.
 
 ![](/Pics/Figure_3.png)
 
@@ -415,7 +415,7 @@ writetable(cell2table(allbiotypes),'allbiotypes.txt','WriteVariableNames',0)
 
 ```
 
-Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescountspercents.txt", and calculate the minimum, maximum, and average values for each biotype. You can access my completed spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx). Notably, protein_coding genes exhibit an average of 98.65% among the various biotypes, consistent with my expectations. Moreover, I found no samples with excessive contributions from other biotypes (e.g. mitochondrial and non-coding RNAs), and therefore no library quality issues were found in this step in Figure 5. 
+Using Excel, create a spreadsheet using "allbiotypes.txt" and "allbiotypescountspercents.txt", and calculate the minimum, maximum, and average values for each biotype in Figure 5. You can access my completed spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_MASTER.xlsx). Notably, protein_coding genes exhibit an average of 98.65% among the various biotypes, consistent with my expectations. Moreover, I found no samples with excessive contributions from other biotypes (e.g. mitochondrial and non-coding RNAs), and therefore no library quality issues were found in this step. 
 
 ![](/Pics/Figure_5.png)
 
