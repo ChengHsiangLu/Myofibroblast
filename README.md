@@ -564,7 +564,7 @@ dlmwrite('RBarretTNFATGFBCnt_GMask.txt', RBarretTNFATGFBCnt_GMask,'delimiter','\
 
 #### Install packages
 
-First, install packages BiocManager, BiocLite, IHW, DESeq2, and ggplot2. Then, read in RBarretTNFATGFBCnt\_GMask.txt, RBarretTNFATGFBsamples.txt, samplekeys\_Sam.txt, and Gencode\_33\_Selected\_Genename\_GMask.txt.
+First, install packages BiocManager, BiocLite, IHW, DESeq2[7], and ggplot2. Then, read in RBarretTNFATGFBCnt\_GMask.txt, RBarretTNFATGFBsamples.txt, samplekeys\_Sam.txt, and Gencode\_33\_Selected\_Genename\_GMask.txt.
 
 ```
 
@@ -869,10 +869,87 @@ You can sort this sheet with PC1, PC2, and so on to see the correlation between 
 ![](/Pics/spreadsheet.png)
 
  <br> 
+ 
+#### DESed analysis for pair_wise comparisons
+ 
+Reorder data by phenotypes and patients (lines)
+
+```
+samplesorder=c(4,1,3,2,8,5,7,6,28,25,27,26,32,29,31,30,36,33,35,34,40,37,39,38,52,49,51,50,56,53,55,54,68,65,67,66,72,69,71,70,76,73,75,74,80,77,79,78,84,81,83,82,88,85,87,86,116,113,115,114,120,117,119,118,139,136,138,137,143,140,142,141,12,9,11,10,16,13,15,14,20,17,19,18,24,21,23,22,44,41,43,42,48,45,47,46,60,57,59,58,64,61,63,62,92,89,91,90,96,93,95,94,100,97,99,98,104,101,103,102,108,105,107,106,112,109,111,110,124,121,123,122,128,125,127,126,132,129,131,130,135,133,134,147,144,146,145,151,148,150,149)
+```
+
+ <br> 
+
+#### Add the PC1 coordinate of each sample into the experimental design, to be used as factor in the model
+
+```
+BarretMyofCnt=RBarretTNFATGFBCntGMask[,samplesorder]sampleTableMyof=cbind(sampleTableTNFATGFB[samplesorder,],pcabatchALL[samplesorder,1:2])sampleTableMyof$PC1 <- scale(sampleTableMyof$PC1 , center = TRUE) BarretMYO_Batch_vsd=RBarretTNFATGFBCntGMaskBatch_vsd[,samplesorder]write.csv(assay(BarretMYO_Batch_vsd),file="BarretMYO_Batch_vsd.csv")
+
+```
+
+ <br> 
+
+#### Check gene name duplicates
+
+```
+Genenames = as.list(read.table("Gencode_33_Selected_Genename_GMask.txt",header=FALSE,as.is=TRUE))
+
+```
+
+ <br> 
+
+#### Find duplicate row names
+
+```
+duplicated_genes <- Genenames$V1[duplicated(Genenames$V1)]if(length(duplicated_genes) > 0){  cat("Duplicate gene names found:", paste(duplicated_genes, collapse = ", "))} else {  cat("No duplicate gene names found.")}
+
+#Duplicate gene names found: TBCE, ATXN7, AHRR, MATR3, HSPA14, TMSB15B
+
+```
+```
+duplicated_indices <- which(duplicated(Genenames$V1))if(length(duplicated_indices) > 0){  cat("Duplicate gene names found at indices:", paste(duplicated_indices, collapse = ", "))} else {  cat("No duplicate gene names found.")}#Duplicate gene names found at indices: 1530, 3024, 4133, 4576, 7638, 15459```
+
+```
+Genenames$V1[1530] <- "TBCE_1"Genenames$V1[3024] <- "ATXN7_1"Genenames$V1[4133] <- "AHRR_1"Genenames$V1[4576] <- "MATR3_1"Genenames$V1[7638] <- "HSPA14_1"Genenames$V1[15459] <- "TMSB15B_1"
+
+```
+
+ <br> 
+ 
+#### First round of pairwise comparisons:
+
+All cell lines UNTREATED vs All cell lines TGFβ
+All cell lines UNTREATED vs All cell lines TNFα
+All cell lines UNTREATED vs All cell lines TNFα/TGFβ#### We model the data correcting for PC1 and Line (patient-specific expression). We then test for the treatment effect```
+RBarretMYOFCntGMaskTreatment <- DESeqDataSetFromMatrix(BarretMyofCnt, colData= sampleTableMyof, design= ~ Batch + Treatment)RBarretMYOFCntGMaskTreatment <- DESeq(RBarretMYOFCntGMaskTreatment)
+
+```
+
+<br>
+#### The filterFun argument specifies a multiple testing correction method to apply to the results, in this case the independent hypothesis weighting (IHW) method.
+
+```
+RBarretMYOFCntGMaskTreatment_TG <- results(RBarretMYOFCntGMaskTreatment,contrast=c("Treatment", "TG", "CC"),filterFun=ihw)RBarretMYOFCntGMaskTreatment_TN <- results(RBarretMYOFCntGMaskTreatment,contrast=c("Treatment", "TN", "CC"),filterFun=ihw)RBarretMYOFCntGMaskTreatment_TT <- results(RBarretMYOFCntGMaskTreatment,contrast=c("Treatment", "TT", "CC"),filterFun=ihw)
+
+```
+
+<br>#### visually check the names of the most significant genes (very low adjusted p-value)```
+Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TG$padj<0.000000000000001)] Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TN$padj<0.000000000000001)] Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TT$padj<0.000000000000001)] 
+
+```
+
+<br>
+
+#### EXPORT AND PROCESS RESULTS
+
+```
+write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TG),file="RBarretMYOFCntGMaskTreatment_TG.txt")write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TN),file="RBarretMYOFCntGMaskTreatment_TN.txt")write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TT),file="RBarretMYOFCntGMaskTreatment_TT.txt")
+
+```
 
 ## Future works 
 
-
+To further our understanding of complex signaling pathways, we propose integrating data from both the myofibroblast experiment and the epithelial experiment, both of which involve treatments. By combining these datasets, we aim to identify novel ways to distinguish between cellular responses and gain insight into potential mechanisms underlying these responses. Specifically, I plan to leverage this combined dataset to model responses from induced pluripotent stem cell (iPSC) lines, which could provide a powerful tool for studying complex signaling pathways. By doing so, we hope to enhance our understanding of the intricate interplay between various signaling pathways and pave the way for future research in this field.
 
 <br> 
 
@@ -884,5 +961,8 @@ You can sort this sheet with PC1, PC2, and so on to see the correlation between 
 4.	Ihara, S., Y. Hirata, and K. Koike, TGF-beta in inflammatory bowel disease: a key regulator of immune cells, epithelium, and the intestinal microbiota. J Gastroenterol, 2017. 52(7): p. 777-787.
 5.	Wang, Q., et al., Applications of human organoids in the personalized treatment for digestive diseases. Signal Transduct Target Ther, 2022. 7(1): p. 336.
 6.	Carcamo-Orive, I., et al., Analysis of Transcriptional Variability in a Large Human iPSC Library Reveals Genetic and Non-genetic Determinants of Heterogeneity. Cell Stem Cell, 2017. 20(4): p. 518-532 e9.
+7.	Anders, S. and W. Huber, Differential expression analysis for sequence count data. Genome Biol, 2010. 11(10): p. R106.
+
+
 
 <br>
