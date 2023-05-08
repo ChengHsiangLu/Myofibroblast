@@ -100,7 +100,7 @@ cat tofastatable.txt | awk {print}' | while read file library preffix ; do qsub 
 done 
 
 ``` 
-This is what each fasta-formatted file would look like:
+This is what each fasta-formatted file would look like in Figure 1.
 
 ![](/Pics/Figure_1.png)
 
