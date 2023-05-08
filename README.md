@@ -933,17 +933,38 @@ All cell lines UNTREATED vs All cell lines TGFβ
 
 ```
 
-<br>#### visually check the names of the most significant genes (very low adjusted p-value)```
+<br>#### Visually check the names of the most significant genes (very low adjusted p-value)```
 Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TG$padj<0.000000000000001)] Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TN$padj<0.000000000000001)] Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TT$padj<0.000000000000001)] 
 
 ```
 
 <br>
 
-#### EXPORT AND PROCESS RESULTS
+#### Export and process results
 
 ```
 write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TG),file="RBarretMYOFCntGMaskTreatment_TG.txt")write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TN),file="RBarretMYOFCntGMaskTreatment_TN.txt")write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TT),file="RBarretMYOFCntGMaskTreatment_TT.txt")
+
+```
+
+<br>
+
+#### Pairwise results shreadsheet
+
+Paste Gencode_33_Selected_Geneid_GMask.txt, Gencode_33_Selected_Genename_GMask.txt, Gencode_33_Selected_MappSS_GMask.txt, 
+RBarretMYOFCntGMaskTreatment_TG_test.txt, RBarretMYOFCntGMaskTreatment_TN_test.txt, and
+RBarretMYOFCntGMaskTreatment_TT_test.txt to formulate a shreadsheet.
+
+
+```
+
+tail -n +2 RBarretMYOFCntGMaskTreatment_TG.txt | cut -d"," -f3,7 > RBarretMYOFCntGMaskTreatment_TG_test.txt
+
+tail -n +2 RBarretMYOFCntGMaskTreatment_TN.txt | cut -d"," -f3,7 > RBarretMYOFCntGMaskTreatment_TN_test.txt
+
+tail -n +2 RBarretMYOFCntGMaskTreatment_TT.txt | cut -d"," -f3,7 > RBarretMYOFCntGMaskTreatment_TT_test.txt
+
+paste Gencode_33_Selected_Geneid_GMask.txt Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_MappSS_GMask.txt  RBarretMYOFCntGMaskTreatment_TG_test.txt RBarretMYOFCntGMaskTreatment_TN_test.txt RBarretMYOFCntGMaskTreatment_TT_test.txt > test.txt
 
 ```
 
