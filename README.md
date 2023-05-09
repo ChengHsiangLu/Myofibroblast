@@ -994,7 +994,7 @@ sed 's/,/\t/g' Barret_Myofibroblast_TGFTNF_PAIRWISEResults.txt > Barret_Myofibro
 
 ```
 
-In Figure 13, it shows a clear formatted sheet containing Gene ID, Gene name, Mappability, fold change, and adjusted p-value. Then, you can sort each adjusted p-value column to ...You can find the pairwise results spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_PAIRWISEResults.xlsx).
+In Figure 13, it shows a clear formatted sheet containing Gene ID, Gene name, Mappability, fold change, and adjusted p-value. Then, you can sort each adjusted p-value column to focus on genes you are interested in. You can find the pairwise results spreadsheet [here](/spreadsheet/Barret_Myofibroblast_TGFTNF_PAIRWISEResults.xlsx).
 
 ![](/Pics/Figure_13.png)
 
