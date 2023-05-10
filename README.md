@@ -1114,7 +1114,11 @@ Finally, we can screen how our differential results capture previously known pro
 
 ## Future works 
 
-To further our understanding of complex signaling pathways, we propose integrating data from both the myofibroblast experiment and the epithelial experiment, both of which involve treatments. By combining these datasets, we aim to identify novel ways to distinguish between cellular responses and gain insight into potential mechanisms underlying these responses. Specifically, I plan to leverage this combined dataset to model responses from induced pluripotent stem cell (iPSC) lines, which could provide a powerful tool for studying complex signaling pathways. By doing so, we hope to enhance our understanding of the intricate interplay between various signaling pathways and pave the way for future research in this field.
+To further our understanding of these complex signaling pathways, my future activities in this project will include:
+
+* The identification of patient-specific responses
+* The identification of phenotype-specific responses, to better understand if our iPSC models can shed light into the predisposition of some patients to develop fibrotic complications
+* The integration of this experiment with a matched dataset (same iPSC lines, same treatment) obtained from iPSC lines differentiated into epithelial organoids (currently being analyzed). My goal is to integrating data from both the myofibroblast experiment and the epithelial experiment. By combining these datasets, I aim to identify patient-specific and phenotype-specific epithelial-mesenchymal interactions under inflammatory (TNFa) and pro-fibrotic (TGFb) conditions. These epithelial-mesenchymal interactions are known to be involved in the recurrence of fibrotic complication in some IBD patients. One possible way to do this is to merge both datasets to analyze differential changes in the levels of ligand-receptor interactions between both cell types. If successful, leveraging this combined dataset to model responses from iPSCs lines could provide a powerful tool for studying personalized interventions for these diseases.
 
 <br> 
 
