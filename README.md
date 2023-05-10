@@ -1000,6 +1000,26 @@ In Figure 13, it shows a clear formatted sheet containing Gene ID, Gene name, Ma
 
 <br>
 
+#### Pathway analysis
+
+Go to [Metascape](https://metascape.org/) and enter the top 500 sorted gene list. After customizing your analysis, you can get their pathway analysis result.
+
+![](/Pics/Figure_14.png)
+
+<br>
+
+![](/Pics/Figure_15.png)
+
+<br>
+
+![](/Pics/Figure_16.png)
+
+<br>
+
+![](/Pics/Figure_17.png)
+
+<br>
+
 ## Future works 
 
 To further our understanding of complex signaling pathways, we propose integrating data from both the myofibroblast experiment and the epithelial experiment, both of which involve treatments. By combining these datasets, we aim to identify novel ways to distinguish between cellular responses and gain insight into potential mechanisms underlying these responses. Specifically, I plan to leverage this combined dataset to model responses from induced pluripotent stem cell (iPSC) lines, which could provide a powerful tool for studying complex signaling pathways. By doing so, we hope to enhance our understanding of the intricate interplay between various signaling pathways and pave the way for future research in this field.
