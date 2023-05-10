@@ -1060,25 +1060,24 @@ RBarretMYOFCntGMaskTreatment\_TT\_test.txt to formulate a shreadsheet.
 
 
 ```
+
 #In terminal
 
-tail -n +2 RBarretMYOFCntGMaskFactor_CC_Pheno.txt | cut -d"," -f3,7 > RBarretMYOFCntGMaskFactor_CC_Pheno_test.txt
+tail -n +2 RBarretMYOFCntGMaskFactor_CC_Pheno.txt | sed 's/,/\t/g' | cut -d$'\t' -f3,7 > RBarretMYOFCntGMaskFactor_CC_Pheno_test.txt
 
-tail -n +2 RBarretMYOFCntGMaskFactor_TG_Pheno.txt | cut -d"," -f3,7 > RBarretMYOFCntGMaskFactor_TG_Pheno_test.txt
+tail -n +2 RBarretMYOFCntGMaskFactor_TG_Pheno.txt | sed 's/,/\t/g' | cut -d$'\t' -f3,7 > RBarretMYOFCntGMaskFactor_TG_Pheno_test.txt
 
-tail -n +2 RBarretMYOFCntGMaskFactor_TN_Pheno.txt | cut -d"," -f3,7 > RBarretMYOFCntGMaskFactor_TN_Pheno_test.txt
+tail -n +2 RBarretMYOFCntGMaskFactor_TN_Pheno.txt | sed 's/,/\t/g' | cut -d$'\t' -f3,7 > RBarretMYOFCntGMaskFactor_TN_Pheno_test.txt
 
-tail -n +2 RBarretMYOFCntGMaskFactor_TT_Pheno.txt | cut -d"," -f3,7 > RBarretMYOFCntGMaskFactor_TT_Pheno_test.txt
+tail -n +2 RBarretMYOFCntGMaskFactor_TT_Pheno.txt | sed 's/,/\t/g' | cut -d$'\t' -f3,7 > RBarretMYOFCntGMaskFactor_TT_Pheno_test.txt
 
-tail -n +2 RBarretMYOFCntGMaskTreatment_TG.txt | cut -d"," -f3,7 > RBarretMYOFCntGMaskTreatment_TG_test.txt
+tail -n +2 RBarretMYOFCntGMaskTreatment_TG.txt | sed 's/,/\t/g' | cut -d$'\t' -f3,7 > RBarretMYOFCntGMaskTreatment_TG_test.txt
 
-tail -n +2 RBarretMYOFCntGMaskTreatment_TN.txt | cut -d"," -f3,7 > RBarretMYOFCntGMaskTreatment_TN_test.txt
+tail -n +2 RBarretMYOFCntGMaskTreatment_TN.txt | sed 's/,/\t/g' | cut -d$'\t' -f3,7 > RBarretMYOFCntGMaskTreatment_TN_test.txt
 
-tail -n +2 RBarretMYOFCntGMaskTreatment_TT.txt | cut -d"," -f3,7 > RBarretMYOFCntGMaskTreatment_TT_test.txt
+tail -n +2 RBarretMYOFCntGMaskTreatment_TT.txt | sed 's/,/\t/g' | cut -d$'\t' -f3,7 > RBarretMYOFCntGMaskTreatment_TT_test.txt
 
 paste Gencode_33_Selected_Geneid_GMask.txt Gencode_33_Selected_Genename_GMask.txt Gencode_33_Selected_MappSS_GMask.txt  RBarretMYOFCntGMaskFactor_CC_Pheno_test.txt RBarretMYOFCntGMaskFactor_TG_Pheno_test.txt RBarretMYOFCntGMaskFactor_TN_Pheno_test.txt RBarretMYOFCntGMaskFactor_TT_Pheno_test.txt RBarretMYOFCntGMaskTreatment_TG_test.txt RBarretMYOFCntGMaskTreatment_TN_test.txt RBarretMYOFCntGMaskTreatment_TT_test.txt > Barret_Myofibroblast_TGFTNF_PAIRWISEResults.txt
-
-sed 's/,/\t/g' Barret_Myofibroblast_TGFTNF_PAIRWISEResults.txt > Barret_Myofibroblast_TGFTNF_PAIRWISEResults.txt
 
 ```
 
