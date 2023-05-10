@@ -692,7 +692,12 @@ pcabatchR<- cbind(pcabatchALL,sampleTableTNFATGFB)
 
 ```
 
-ggplot(pcabatchR, aes(PC1, PC2, color= Treatment)) +  geom_point(aes(size= Pheno),alpha=0.6,stroke = 3)+  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) +  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = 'grey50')+ theme_bw()
+ggplot(pcabatchR, aes(PC1, PC2, color= Treatment)) +
+  geom_point(aes(size= Pheno),alpha=0.6,stroke = 3)+
+  xlab(paste0("PC1: ",percentVarbatch[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVarbatch[2],"% variance")) +
+  geom_text_repel(aes(label = sampleKeyTNFATGFB),size=4,box.padding   = 0.35, point.padding = 0.5,segment.color = 'grey50')+ theme_bw()
+
 
 
 ```
@@ -875,7 +880,9 @@ You can sort this sheet with PC1, PC2, and so on to see the correlation between 
 Reorder data by phenotypes and patients (lines)
 
 ```
-samplesorder=c(4,1,3,2,8,5,7,6,28,25,27,26,32,29,31,30,36,33,35,34,40,37,39,38,52,49,51,50,56,53,55,54,68,65,67,66,72,69,71,70,76,73,75,74,80,77,79,78,84,81,83,82,88,85,87,86,116,113,115,114,120,117,119,118,139,136,138,137,143,140,142,141,12,9,11,10,16,13,15,14,20,17,19,18,24,21,23,22,44,41,43,42,48,45,47,46,60,57,59,58,64,61,63,62,92,89,91,90,96,93,95,94,100,97,99,98,104,101,103,102,108,105,107,106,112,109,111,110,124,121,123,122,128,125,127,126,132,129,131,130,135,133,134,147,144,146,145,151,148,150,149)
+
+samplesorder=c(4,1,3,2,8,5,7,6,28,25,27,26,32,29,31,30,36,33,35,34,40,37,39,38,52,49,51,50,56,53,55,54,68,65,67,66,72,69,71,70,76,73,75,74,80,77,79,78,84,81,83,82,88,85,87,86,116,113,115,114,120,117,119,118,139,136,138,137,143,140,142,141,12,9,11,10,16,13,15,14,20,17,19,18,24,21,23,22,44,41,43,42,48,45,47,46,60,57,59,58,64,61,63,62,92,89,91,90,96,93,95,94,100,97,99,98,104,101,103,102,108,105,107,106,112,109,111,110,124,121,123,122,128,125,127,126,132,129,131,130,135,133,134,147,144,146,145,151,148,150,149)
+
 ```
 
  <br> 
@@ -883,8 +890,16 @@ Reorder data by phenotypes and patients (lines)
 Add the PC1 coordinate of each sample into the experimental design, to be used as factor in the model
 
 ```
-BarretMyofCnt=RBarretTNFATGFBCntGMask[,samplesorder]sampleTableMyof=cbind(sampleTableTNFATGFB[samplesorder,],pcabatchALL[samplesorder,1:2])sampleTableMyof$PC1 <- scale(sampleTableMyof$PC1 , center = TRUE) #normalized and batch-corrected expression matrix 
-#using the variance stabilizing transformationBarretMYO_Batch_vsd=RBarretTNFATGFBCntGMaskBatch_vsd[,samplesorder]write.csv(assay(BarretMYO_Batch_vsd),file="BarretMYO_Batch_vsd.csv")
+
+BarretMyofCnt=RBarretTNFATGFBCntGMask[,samplesorder]
+sampleTableMyof=cbind(sampleTableTNFATGFB[samplesorder,],pcabatchALL[samplesorder,1:2])
+sampleTableMyof$PC1 <- scale(sampleTableMyof$PC1 , center = TRUE) 
+
+#normalized and batch-corrected expression matrix 
+#using the variance stabilizing transformation
+BarretMYO_Batch_vsd=RBarretTNFATGFBCntGMaskBatch_vsd[,samplesorder]
+
+write.csv(assay(BarretMYO_Batch_vsd),file="BarretMYO_Batch_vsd.csv")
 
 ```
 
@@ -893,19 +908,41 @@ Add the PC1 coordinate of each sample into the experimental design, to be used a
 Check gene name duplicates
 
 ```
-Genenames = as.list(read.table("Gencode_33_Selected_Genename_GMask.txt",header=FALSE,as.is=TRUE))
 
-#Find duplicate gene namesduplicated_genes <- Genenames$V1[duplicated(Genenames$V1)]if(length(duplicated_genes) > 0){  cat("Duplicate gene names found:", paste(duplicated_genes, collapse = ", "))} else {  cat("No duplicate gene names found.")}
+Genenames = as.list(read.table("Gencode_33_Selected_Genename_GMask.txt",header=FALSE,as.is=TRUE))
+
+#Find duplicate gene names
+duplicated_genes <- Genenames$V1[duplicated(Genenames$V1)]
+if(length(duplicated_genes) > 0){
+  cat("Duplicate gene names found:", paste(duplicated_genes, collapse = ", "))
+} else {
+  cat("No duplicate gene names found.")
+}
 
 #Duplicate gene names found: TBCE, ATXN7, AHRR, MATR3, HSPA14, TMSB15B
 
 
-#Find duplicate gene names at indicesduplicated_indices <- which(duplicated(Genenames$V1))if(length(duplicated_indices) > 0){  cat("Duplicate gene names found at indices:", paste(duplicated_indices, collapse = ", "))} else {  cat("No duplicate gene names found.")}#Duplicate gene names found at indices: 1530, 3024, 4133, 4576, 7638, 15459```
+#Find duplicate gene names at indices
+duplicated_indices <- which(duplicated(Genenames$V1))
+if(length(duplicated_indices) > 0){
+  cat("Duplicate gene names found at indices:", paste(duplicated_indices, collapse = ", "))
+} else {
+  cat("No duplicate gene names found.")
+}
+#Duplicate gene names found at indices: 1530, 3024, 4133, 4576, 7638, 15459
+
+```
 
 ```
 
 #Correct the duplicated gene names 
-#by appending "_1" to the end of each duplicate gene nameGenenames$V1[1530] <- "TBCE_1"Genenames$V1[3024] <- "ATXN7_1"Genenames$V1[4133] <- "AHRR_1"Genenames$V1[4576] <- "MATR3_1"Genenames$V1[7638] <- "HSPA14_1"Genenames$V1[15459] <- "TMSB15B_1"
+#by appending "_1" to the end of each duplicate gene name
+Genenames$V1[1530] <- "TBCE_1"
+Genenames$V1[3024] <- "ATXN7_1"
+Genenames$V1[4133] <- "AHRR_1"
+Genenames$V1[4576] <- "MATR3_1"
+Genenames$V1[7638] <- "HSPA14_1"
+Genenames$V1[15459] <- "TMSB15B_1"
 
 ```
 
@@ -914,17 +951,26 @@ Check gene name duplicates
 **First round of pairwise comparisons:**
 
 All cell lines UNTREATED vs All cell lines TGFβ
-All cell lines UNTREATED vs All cell lines TNFα
-All cell lines UNTREATED vs All cell lines TNFα/TGFβWe model the data correcting for PC1 and Line (patient-specific expression) and then test for the treatment effect```
+
+All cell lines UNTREATED vs All cell lines TNFα
+
+All cell lines UNTREATED vs All cell lines TNFα/TGFβ
+
+We model the data correcting for PC1 and Line (patient-specific expression) and then test for the treatment effect
+
+```
 
 #The factor "Batch" is included as a covariate to account for potential batch effects, 
 #and the factor "Treatment" is included as the variable of interest for differential expression analysis.
-RBarretMYOFCntGMaskTreatment <- DESeqDataSetFromMatrix(BarretMyofCnt, colData= sampleTableMyof, design= ~ Batch + Treatment)RBarretMYOFCntGMaskTreatment <- DESeq(RBarretMYOFCntGMaskTreatment)
+
+RBarretMYOFCntGMaskTreatment <- DESeqDataSetFromMatrix(BarretMyofCnt, colData= sampleTableMyof, design= ~ Batch + Treatment)
+RBarretMYOFCntGMaskTreatment <- DESeq(RBarretMYOFCntGMaskTreatment)
 
 ```
 
 <br>
-The filterFun argument specifies a multiple testing correction method to apply to the results, in this case the independent hypothesis weighting (IHW) method.
+
+The filterFun argument specifies a multiple testing correction method to apply to the results, in this case the independent hypothesis weighting (IHW) method.
 
 ```
 #Calculate differential expression results for the pairwise comparisons of 
@@ -932,33 +978,75 @@ All cell lines UNTREATED vs All cell lines TGFβ
 
 #The resulting output for each comparison will contain a table of genes 
 #with their corresponding LFCs, p-values, and adjusted p-values based on the specified multiple testing correction method.
-RBarretMYOFCntGMaskTreatment_TG <- results(RBarretMYOFCntGMaskTreatment,contrast=c("Treatment", "TG", "CC"),filterFun=ihw)RBarretMYOFCntGMaskTreatment_TN <- results(RBarretMYOFCntGMaskTreatment,contrast=c("Treatment", "TN", "CC"),filterFun=ihw)RBarretMYOFCntGMaskTreatment_TT <- results(RBarretMYOFCntGMaskTreatment,contrast=c("Treatment", "TT", "CC"),filterFun=ihw)
+
+RBarretMYOFCntGMaskTreatment_TG <- results(RBarretMYOFCntGMaskTreatment,contrast=c("Treatment", "TG", "CC"),filterFun=ihw)
+RBarretMYOFCntGMaskTreatment_TN <- results(RBarretMYOFCntGMaskTreatment,contrast=c("Treatment", "TN", "CC"),filterFun=ihw)
+RBarretMYOFCntGMaskTreatment_TT <- results(RBarretMYOFCntGMaskTreatment,contrast=c("Treatment", "TT", "CC"),filterFun=ihw)
 
 ```
 
-<br>Visually check the names of the most significant genes (very low adjusted p-value)```
-Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TG$padj<0.000000000000001)] Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TN$padj<0.000000000000001)] Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TT$padj<0.000000000000001)] 
+<br>
+
+Visually check the names of the most significant genes (very low adjusted p-value)
+
+```
+
+Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TG$padj<0.000000000000001)] 
+Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TN$padj<0.000000000000001)] 
+Genenames$V1[which(RBarretMYOFCntGMaskTreatment_TT$padj<0.000000000000001)] 
 
 ```
 
 <br>
 
 **Second round of pairwise comparisons:**
-Untreated NON-FIBROTIC cell lines vs Untreated FIBROTIC cell lines
-TNFα/TGFβ NON-FIBROTIC cell lines vs TNFα/TGFβ FIBROTIC cell lines
-TGFβ NON-FIBROTIC cell lines vs TGFβ FIBROTIC cell lines
-TNFα NON-FIBROTIC cell lines vs TNFα FIBROTIC cell linesWe model the data correcting for Line (patient-specific expression) and then test for the Factor (treatment+phenotype combination) effect.```
-RBarretMYOFCntGMaskFactor <- DESeqDataSetFromMatrix(BarretMyofCnt, colData= sampleTableMyof, design= ~ Line + Factor)RBarretMYOFCntGMaskFactor <- DESeq(RBarretMYOFCntGMaskFactor)```
+
+Untreated NON-FIBROTIC cell lines vs Untreated FIBROTIC cell lines
+
+TNFα/TGFβ NON-FIBROTIC cell lines vs TNFα/TGFβ FIBROTIC cell lines
+
+TGFβ NON-FIBROTIC cell lines vs TGFβ FIBROTIC cell lines
+
+TNFα NON-FIBROTIC cell lines vs TNFα FIBROTIC cell lines
+
+We model the data correcting for Line (patient-specific expression) and then test for the Factor (treatment+phenotype combination) effect.
+
+```
+
+RBarretMYOFCntGMaskFactor <- DESeqDataSetFromMatrix(BarretMyofCnt, colData= sampleTableMyof, design= ~ Line + Factor)
+RBarretMYOFCntGMaskFactor <- DESeq(RBarretMYOFCntGMaskFactor)
+
+```
 
 ```
 #Compute differential expression analysis results for the four contrasts of interest "CC_F" vs "CC_N", "TG_F" vs "TG_N", "TN_F" vs "TN_N", and "TT_F" vs "TT_N" in the dataset.
-RBarretMYOFCntGMaskFactor_CC_Pheno <- results(RBarretMYOFCntGMaskFactor,contrast=c("Factor", "CC_F", "CC_N"),filterFun=ihw)RBarretMYOFCntGMaskFactor_TG_Pheno <- results(RBarretMYOFCntGMaskFactor,contrast=c("Factor", "TG_F", "TG_N"),filterFun=ihw)RBarretMYOFCntGMaskFactor_TN_Pheno <- results(RBarretMYOFCntGMaskFactor,contrast=c("Factor", "TN_F", "TN_N"),filterFun=ihw)RBarretMYOFCntGMaskFactor_TT_Pheno <- results(RBarretMYOFCntGMaskFactor,contrast=c("Factor", "TT_F", "TT_N"),filterFun=ihw)
-``````Genenames$V1[which(RBarretMYOFCntGMaskFactor_CC_Pheno$padj<0.01)] Genenames$V1[which(RBarretMYOFCntGMaskFactor_TG_Pheno$padj<0.01)] Genenames$V1[which(RBarretMYOFCntGMaskFactor_TN_Pheno$padj<0.01)] Genenames$V1[which(RBarretMYOFCntGMaskFactor_TT_Pheno$padj<0.01)] 
 
-```Export and process results
+RBarretMYOFCntGMaskFactor_CC_Pheno <- results(RBarretMYOFCntGMaskFactor,contrast=c("Factor", "CC_F", "CC_N"),filterFun=ihw)
+RBarretMYOFCntGMaskFactor_TG_Pheno <- results(RBarretMYOFCntGMaskFactor,contrast=c("Factor", "TG_F", "TG_N"),filterFun=ihw)
+RBarretMYOFCntGMaskFactor_TN_Pheno <- results(RBarretMYOFCntGMaskFactor,contrast=c("Factor", "TN_F", "TN_N"),filterFun=ihw)
+RBarretMYOFCntGMaskFactor_TT_Pheno <- results(RBarretMYOFCntGMaskFactor,contrast=c("Factor", "TT_F", "TT_N"),filterFun=ihw)
 
 ```
-write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TG),file="RBarretMYOFCntGMaskTreatment_TG.txt")write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TN),file="RBarretMYOFCntGMaskTreatment_TN.txt")write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TT),file="RBarretMYOFCntGMaskTreatment_TT.txt")write.csv(as.data.frame(RBarretMYOFCntGMaskFactor_CC_Pheno),file="RBarretMYOFCntGMaskFactor_CC_Pheno.txt")write.csv(as.data.frame(RBarretMYOFCntGMaskFactor_TG_Pheno),file="RBarretMYOFCntGMaskFactor_TG_Pheno.txt")write.csv(as.data.frame(RBarretMYOFCntGMaskFactor_TN_Pheno),file="RBarretMYOFCntGMaskFactor_TN_Pheno.txt")write.csv(as.data.frame(RBarretMYOFCntGMaskFactor_TT_Pheno),file="RBarretMYOFCntGMaskFactor_TT_Pheno.txt")
+
+```
+Genenames$V1[which(RBarretMYOFCntGMaskFactor_CC_Pheno$padj<0.01)] 
+Genenames$V1[which(RBarretMYOFCntGMaskFactor_TG_Pheno$padj<0.01)] 
+Genenames$V1[which(RBarretMYOFCntGMaskFactor_TN_Pheno$padj<0.01)] 
+Genenames$V1[which(RBarretMYOFCntGMaskFactor_TT_Pheno$padj<0.01)] 
+
+```
+
+Export and process results
+
+```
+
+write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TG),file="RBarretMYOFCntGMaskTreatment_TG.txt")
+write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TN),file="RBarretMYOFCntGMaskTreatment_TN.txt")
+write.csv(as.data.frame(RBarretMYOFCntGMaskTreatment_TT),file="RBarretMYOFCntGMaskTreatment_TT.txt")
+write.csv(as.data.frame(RBarretMYOFCntGMaskFactor_CC_Pheno),file="RBarretMYOFCntGMaskFactor_CC_Pheno.txt")
+write.csv(as.data.frame(RBarretMYOFCntGMaskFactor_TG_Pheno),file="RBarretMYOFCntGMaskFactor_TG_Pheno.txt")
+write.csv(as.data.frame(RBarretMYOFCntGMaskFactor_TN_Pheno),file="RBarretMYOFCntGMaskFactor_TN_Pheno.txt")
+write.csv(as.data.frame(RBarretMYOFCntGMaskFactor_TT_Pheno),file="RBarretMYOFCntGMaskFactor_TT_Pheno.txt")
 
 ```
 
@@ -1002,7 +1090,7 @@ In Figure 13, it shows a clear formatted sheet containing Gene ID, Gene name, Ma
 
 #### Pathway analysis
 
-Go to [Metascape](https://metascape.org/) and enter the top 500 sorted gene list. After customizing your analysis, you can get their pathway analysis result.
+To run a first test on the reliability of the differential expression results above, we retrieve the top most significant genes (by adjusted p-value) and run functional enrichment analysis using [Metascape](https://metascape.org/). An example of the enrichment analyses that can be used for validation are below, using the top 500 most significant genes by their overall response to the TNFa-TGFb combination.
 
 ![](/Pics/Figure_14.png)
 
