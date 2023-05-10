@@ -1096,8 +1096,9 @@ Figure 14 shows an enrichment network of the most significant pathways and funct
 ![](/Pics/Figure_14.png)
 
 <br>
-
 Figure 15 shows the same enrichment network colored by statistical significance (hypergeomtric p-value):
+
+
 ![](/Pics/Figure_15.png)
 
 <br>
