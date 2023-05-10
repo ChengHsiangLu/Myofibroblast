@@ -1092,18 +1092,18 @@ In Figure 13, it shows a clear formatted sheet containing Gene ID, Gene name, Ma
 
 To run a first test on the reliability of the differential expression results above, we retrieve the top most significant genes (by adjusted p-value) and run functional enrichment analysis using [Metascape](https://metascape.org/). An example of the enrichment analyses that can be used for validation are below, using the top 500 most significant genes by their overall response to the TNFa-TGFb combination.
 
-The following figure shows the top functional terms ranked by significance (hypergeomtric p-value):
-![](/Pics/Figure_16.png)
-
-<br>
-
-Two observations are noted: these results recapitulate the expected response to TNFa, but on the other hand too many categories are related with rather synonymous functional terms. The following figure shows an alternative representation, an enrichment network of the same significant pathways and functional terms. The network is arranged by the similarity between the genes contributing to each term, and colored according to functional groups with high overlap. A highly connected network indicates that most of the top significant pathways are highly redundant, and only a few of them are needed for further consideration.
+The following Figure 14 shows the top functional terms ranked by significance (hypergeomtric p-value):
 ![](/Pics/Figure_14.png)
 
 <br>
 
-The following shows the same enrichment network colored by statistical significance (hypergeomtric p-value):
+Two observations are noted: these results recapitulate the expected response to TNFa, but on the other hand too many categories are related with rather synonymous functional terms. The following Figure 15 shows an alternative representation, an enrichment network of the same significant pathways and functional terms. The network is arranged by the similarity between the genes contributing to each term, and colored according to functional groups with high overlap. A highly connected network indicates that most of the top significant pathways are highly redundant, and only a few of them are needed for further consideration.
 ![](/Pics/Figure_15.png)
+
+<br>
+
+The following Figure 16 shows the same enrichment network colored by statistical significance (hypergeomtric p-value):
+![](/Pics/Figure_16.png)
 
 <br>
 
