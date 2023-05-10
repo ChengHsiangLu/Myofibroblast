@@ -1101,14 +1101,13 @@ Two observations are noted: these results recapitulate the expected response to 
 ![](/Pics/Figure_14.png)
 
 <br>
+
 The following shows the same enrichment network colored by statistical significance (hypergeomtric p-value):
-
-
 ![](/Pics/Figure_15.png)
 
 <br>
-Finally, we can screen how our differential results capture previously known protein-protein interactions. The figures below aggregate treatment-responsive genes in interaction modules. Many of the interactions are expected (e.g. groups of inflammation-related genes
 
+Finally, we can screen how our differential results capture previously known protein-protein interactions. The figures below aggregate treatment-responsive genes in interaction modules. Many of the interactions are expected (e.g. groups of inflammation-related genes
 ![](/Pics/Figure_17.png)
 
 <br>
