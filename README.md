@@ -1092,20 +1092,22 @@ In Figure 13, it shows a clear formatted sheet containing Gene ID, Gene name, Ma
 
 To run a first test on the reliability of the differential expression results above, we retrieve the top most significant genes (by adjusted p-value) and run functional enrichment analysis using [Metascape](https://metascape.org/). An example of the enrichment analyses that can be used for validation are below, using the top 500 most significant genes by their overall response to the TNFa-TGFb combination.
 
-Figure 14 shows an enrichment network of the most significant pathways and functional terms. The network is arranged by the similarity between the genes annotated in each term, and colored according to functional groups with similar gene members. In this case, a highly connected network indicates that most of the top significant pathways are highly redundant.
+The following figure shows the top functional terms ranked by significance (hypergeomtric p-value):
+![](/Pics/Figure_16.png)
+
+<br>
+
+Two observations are noted: these results recapitulate the expected response to TNFa, but on the other hand too many categories are related with rather synonymous functional terms. The following figure shows an alternative representation, an enrichment network of the same significant pathways and functional terms. The network is arranged by the similarity between the genes contributing to each term, and colored according to functional groups with high overlap. A highly connected network indicates that most of the top significant pathways are highly redundant, and only a few of them are needed for further consideration.
 ![](/Pics/Figure_14.png)
 
 <br>
-Figure 15 shows the same enrichment network colored by statistical significance (hypergeomtric p-value):
+The following shows the same enrichment network colored by statistical significance (hypergeomtric p-value):
 
 
 ![](/Pics/Figure_15.png)
 
 <br>
-
-![](/Pics/Figure_16.png)
-
-<br>
+Finally, we can screen how our differential results capture previously known protein-protein interactions. The figures below aggregate treatment-responsive genes in interaction modules. Many of the interactions are expected (e.g. groups of inflammation-related genes
 
 ![](/Pics/Figure_17.png)
 
