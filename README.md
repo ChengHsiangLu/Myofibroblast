@@ -1107,7 +1107,7 @@ The following shows the same enrichment network colored by statistical significa
 
 <br>
 
-Finally, we can screen how our differential results capture previously known protein-protein interactions. The figures below aggregate treatment-responsive genes in interaction modules. Many of the interactions are expected (e.g. groups of inflammation-related genes
+Finally, we can screen how our differential results capture previously known protein-protein interactions. The figures below aggregate treatment-responsive genes in interaction modules. Many of the interactions are expected (e.g. groups of inflammation-related genes, modules of genes known to interact in the control of cell-cyle or NFKB-mediated regulation), and facilitate the validation of the experimental results and the identification of the most regulated genes in specific pathways.
 ![](/Pics/Figure_17.png)
 
 <br>
