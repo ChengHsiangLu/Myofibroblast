@@ -1092,6 +1092,7 @@ In Figure 13, it shows a clear formatted sheet containing Gene ID, Gene name, Ma
 
 To run a first test on the reliability of the differential expression results above, we retrieve the top most significant genes (by adjusted p-value) and run functional enrichment analysis using [Metascape](https://metascape.org/). An example of the enrichment analyses that can be used for validation are below, using the top 500 most significant genes by their overall response to the TNFa-TGFb combination.
 
+Figure 14 shows an enrichment network of the most significant pathways and functional terms. The network is arranged by the similarity between the genes annotated in each term, and colored according to functional groups with similar gene members. In this case, a highly connected network indicates that most of the top significant pathways are highly redundant.
 ![](/Pics/Figure_14.png)
 
 <br>
