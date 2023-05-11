@@ -956,7 +956,7 @@ All cell lines UNTREATED vs All cell lines TNFα
 
 All cell lines UNTREATED vs All cell lines TNFα/TGFβ
 
-We model the data correcting for PC1 and Line (patient-specific expression) and then test for the treatment effect
+We model the data correcting for Line (patient-specific expression) and then test for the treatment effect
 
 ```
 
