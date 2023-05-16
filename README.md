@@ -875,7 +875,7 @@ You can sort this sheet with PC1, PC2, and so on to see the correlation between 
 
  <br> 
  
-#### DESed analysis for pairwise comparisons
+#### DESeq analysis for pairwise comparisons
  
 Reorder data by phenotypes and patients (lines)
 
