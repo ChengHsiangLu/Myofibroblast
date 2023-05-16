@@ -758,7 +758,7 @@ To facilitate visualization, a red line is drawn at position 72 in order to sepa
 
 The Figure 9 below represents PC1 for all samples. From this plot, one can see that PC1 corresponds to extreme expression after treatment with TNF-a in all cases, even more that after its combination with TGF-b. Therefore, it seems to indicate that PC1 is associated with an interaction between TNF-a and TGF-b in iPSC mesenchymal organoids, an unexpected finding that warrants further analysis. 
 
-![](/Pics/PCs/Figure_9.png)
+![](/Pics/Figure_9.png)
 
 <br>
 
